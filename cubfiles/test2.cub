@@ -1,0 +1,12 @@
+SO cubfiles/xpm/south.xpm
+WE cubfiles/xpm/west.xpm
+S cubfiles/xpm/sprite.xpm
+NO cubfiles/xpm/north.xpm
+R 300 100
+C 3,178,200
+EA cubfiles/xpm/east.xpm 
+F 0,      120 ,                         255
+
+111
+1N1
+111
