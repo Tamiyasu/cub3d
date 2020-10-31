@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/01 22:22:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/10/30 17:57:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/10/31 14:44:32 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <limits.h>
 # include "libft.h"
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 256
 # endif
 
 int		get_next_line(int fd, char **line);

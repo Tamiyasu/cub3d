@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/10/31 11:20:26 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/10/31 14:44:19 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,29 @@
 
 typedef struct	s_god
 {
-	void    *mlx;
-    void    *win;
-	void	*win_img;
-	void	*img_addr;
-	int img_bits_per_pixel;
-	int	img_line_length;
-	int img_endian;
-	int wnd_x;
-	int wnd_y;
-    int scr_x;
-    int scr_y;
-	char *title;
-	char *eo_fpath;
-	char *wo_fpath;
-	char *so_fpath;
-	char *no_fpath;
-	char *sp_fpath;
-	int	ce_rgb;
-	int	fl_rgb;
-	char **map;
-	int map_h;
-	int map_w;
-	int bmp;
-	char *err_msg;		
+	void		*mlx;
+    void		*win;
+	void		*win_img;
+	void		*img_addr;
+	int			img_bits_per_pixel;
+	int			img_line_length;
+	int			img_endian;
+	int			wnd_x;
+	int			wnd_y;
+    int			scr_x;
+    int			scr_y;
+	char		*title;
+	char		*eo_fpath;
+	char		*wo_fpath;
+	char		*so_fpath;
+	char		*no_fpath;
+	char		*sp_fpath;
+	int			ce_rgb;
+	int			fl_rgb;
+	char		**map;
+	int			map_h;
+	int			map_w;
+	int			bmp;
+	char		err_msg;		
 }				t_god;	
 #endif
