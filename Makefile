@@ -6,14 +6,14 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/10/30 18:47:19 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/02 23:04:39 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
 #CFLAGS = -Wall -Wextra -Werror
-#CFLAGS = -g -fsanitize=address
+CFLAGS = -g -fsanitize=address
 RM = rm -f
 INCLUDE = -I./includes -I./libft
 SRCS_DIR = srcs
@@ -55,4 +55,5 @@ fclean: clean
 	${MAKE} -C ${LIBFT_DIR} fclean	
 
 re:	fclean all
+
 .PHONY: all clean fclean re bonus

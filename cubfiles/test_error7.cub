@@ -1,0 +1,12 @@
+SO cubfiles/xpm/not_exist_south.xpm
+WE cubfiles/xpm/not_exist_west.xpm
+NO cubfiles/xpm/not_exist_north.xpm
+EA cubfiles/xpm/not_exist_east.xpm 
+S cubfiles/xpm/not_exist_sprite.xpm
+R 300 100
+C 3,178,200
+F 0, 120, 255
+
+111
+1N1
+111
