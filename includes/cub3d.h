@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/04 19:52:08 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/07 20:15:52 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include "../minilibx-linux/mlx.h"
 # include "libft.h"
 # include "get_next_line.h"
-# define F_CUB_NOT_FOUND 0b1;
-# define F_CUB_EXTNAME_E 0b01;
+
+# define ABS(x) (0 < (x)) ? (x) : -(x)
 
 typedef struct	s_img
 {
@@ -65,7 +65,12 @@ typedef struct	s_god
 	t_list		*map_list;
 	double		pli;
 	double  	plj;
+	double		pdx;
+	double  	pdy;
+	double		planex;
+	double  	planey;
 	double		plv;
+	int			exit;
 }				t_god;	
 
 void set_err_msg(t_god *g, char *msg);

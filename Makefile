@@ -6,7 +6,7 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/11/02 23:04:39 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/06 21:52:53 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,14 +27,14 @@ MINILIBX_DIR = minilibx-linux
 MINILIBX = ${MINILIBX_DIR}/libmlx.a
 
 #LIBS = -L. -L./libft -lft -I/usr/local/include -L/usr/local/lib -L./minilibx-linux -lmlx_Linux -lX11 -lXext -lm -lbsd
-LIBS  = -lX11 -lXext -lm -lbsd
+LIBS  = -lX11 -lXext -lm -lbsd -L${LIBFT_DIR} -lft -L${MINILIBX_DIR} -lmlx
 
 OBJS = ${SRCS:.c=.o}
 all: ${NAME}
 bonus: ${NAME}
 
 ${NAME}: ${OBJS} ${LIBFT} ${MINILIBX}
-	${CC} ${CFLAGS} ${INCLUDE} ${LIBS} ${OBJS} ${LIBFT} ${MINILIBX} -o ${NAME}
+	${CC} ${CFLAGS} ${INCLUDE} ${OBJS} ${LIBS} -o ${NAME}
 
 ${LIBFT}: ${LIBFT_DIR}/*.c
 	${MAKE} -C ${LIBFT_DIR}

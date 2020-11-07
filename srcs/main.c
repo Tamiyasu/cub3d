@@ -129,9 +129,6 @@ void ft_lstdelhead(t_list **lst, void (*del)(void *))
 	ft_lstdelone(lst_tmp, del);
 }
 
-
-
-
 void map_closecheck(int i, int j, char **map, t_god *g)
 {
 	t_list *lst;
@@ -183,11 +180,15 @@ void map_check(t_god *g)
 		while(++j < g->map_w)
 			if(ft_strchr("NSWE", g->map[i][j]))
 			{
-				printf("pos : [%d, %d], player_c : %c\n", i, j, g->map[i][j]);
+				//printf("pos : [%d, %d], player_c : %c\n", i, j, g->map[i][j]);
 				p_pos_h = i;
 				p_pos_w = j;
 				g->pli = i + 0.5;
 				g->plj = j + 0.5;
+				g->pdx = -1;
+				g->pdy = 0;
+				g->planex = 0;
+				g->planey = 0.66;
 				if (g->map[i][j] == 'N')
 					g->plv = 0.0;
 				else if (g->map[i][j] == 'E')
@@ -203,8 +204,6 @@ void map_check(t_god *g)
 	while(++i < g->map_h)
 		free(*(for_close_check + i));
 	free(for_close_check);
-
-	/* This is stab */
 	return ;
 }
 
@@ -431,19 +430,229 @@ void load_settings(t_god *g, int argc, char **argv)
 		set_err_msg(g, "plsese use \"--save\" in 2nd args\n");
 }
 
-int		deal_key(int key_code, t_god *g)
+void exit_func(t_god *g)
 {
-	if (key_code == KEY_ESC)
-		exit(0);
+	destroy_god(g);
+	exit(0);
+}
+void	make_image(t_god *g);
+
+int loop_func(t_god *g)
+{
+	if (g->exit)
+		exit_func(g);
+	mlx_do_sync(g->mlx);
+	g->plv += 1.0;
+	int i;
+	int j;
+	i = 0;
+	while (i < g->wnd_x)
+	{	
+		j = 0;
+		while (j < g->wnd_y)
+		{
+			if (j < g->wnd_y / 2)
+				my_mlx_pixel_put(g, i, j, g->ce_rgb);
+			else
+				my_mlx_pixel_put(g, i, j, g->fl_rgb);
+			j++;
+		}
+		i++;
+	}
+	make_image(g);
+	mlx_put_image_to_window(g->mlx, g->win, g->w_img.p, 0, 0);
+//	sleep(3); //please remove before eval.
 	return (0);
 }
 
-int 	bye(t_god *g)
+void verLine(int x, int drowstart, int drowend, int color, t_god *g)
 {
-		exit(0);
+	int y;
+	y = drowstart;
+
+	while (y <= drowend) 
+		my_mlx_pixel_put(g, x, y++, color);
+}
+
+void make_image(t_god *g)
+{
+	int x;
+	int mapX;
+	int mapY;
+
+	x = 0;
+	while(x < g->wnd_x)
+	{
+		double cameraX = 2 * x / (double)(g->wnd_x) - 1;
+		double rayDirX = g->pdx + g->planex * cameraX;
+		double rayDirY = g->pdy + g->planey * cameraX;
+		//printf("g->pli : %f, g->plj : %f\n", g->pli, g->plj);
+		//printf("(int)i : %d, (int)j : %d\n", (int)g->pli, (int)g->plj);
+		mapX = (int)(g->pli);
+		mapY = (int)(g->plj);
+		//printf("mapX : %d, mapY : %d\n", mapX, mapY);
+
+		double sideDistX;
+		double sideDistY;
+		double deltaDistX = ABS(1 / rayDirX);
+		double deltaDistY = ABS(1 / rayDirY);
+		double perpWallDist;
+		int stepX;
+		int stepY;
+
+		int hit = 0;
+		int side;
+		if(rayDirX < 0)
+		{
+        	stepX = -1;
+        	sideDistX = (g->pli - mapX) * deltaDistX;
+	    }
+	    else
+		{
+        	stepX = 1;
+	        sideDistX = (mapX + 1.0 - g->pli) * deltaDistX;
+      	}
+      	if(rayDirY < 0)
+      	{
+			stepY = -1;
+			sideDistY = (g->plj - mapY) * deltaDistY;
+		}
+		else
+		{
+			stepY = 1;
+			sideDistY = (mapY + 1.0 - g->plj) * deltaDistY;
+		}
+		while (hit == 0)
+		{
+	        //jump to next map square, OR in x-direction, OR in y-direction
+    	    if(sideDistX < sideDistY)
+        	{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0;
+	        }
+	        else
+    	    {
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1;
+	        }
+    	    //Check if ray has hit a wall
+			//printf("mapX : %d, mapY : %d, pos : %d\n", mapX, mapY, g->map[mapX][mapY]);
+        	if(g->map[mapX][mapY] == '1')
+				hit = 1;
+	    }
+     	//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
+      	if(side == 0) 
+			perpWallDist = (mapX - g->pli + (1 - stepX) / 2) / rayDirX;
+     	else
+		  perpWallDist = (mapY - g->plj + (1 - stepY) / 2) / rayDirY;
+	    //Calculate height of line to draw on screen
+    	int lineHeight = (int)(g->wnd_y / perpWallDist);
+
+      //calculate lowest and highest pixel to fill in current stripe
+		int drawStart = -lineHeight / 2 + g->wnd_y / 2;
+		int drawEnd;
+		if(drawStart < 0)drawStart = 0;
+			drawEnd = lineHeight / 2 + g->wnd_y / 2;
+		if(drawEnd >= g->wnd_y)
+			drawEnd = g->wnd_y - 1;
+
+      //choose wall color
+		int color;
+		switch(g->map[mapX][mapY])
+		{
+			case 1:  color = 0x00ff0000;    break; //red
+			case 2:  color = 0x0000ff00;  break; //green
+			case 3:  color = 0x000000ff;   break; //blue
+			case 4:  color = 0x00ffffff;  break; //white
+			default: color = 0x00ffff00; break; //yellow
+		}
+
+		//give x and y sides different brightness
+		if(side == 1) {color = color / 2;}
+
+		//draw the pixels of the stripe as a vertical line
+		verLine(x, drawStart, drawEnd, color, g);
+/*
+    //timing for input and FPS counter
+    oldTime = time;
+    time = getTicks();
+    double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
+    print(1.0 / frameTime); //FPS counter
+    redraw();
+    cls();
+
+    //speed modifiers
+    double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
+    double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
+    readKeys();
+    //move forward if no wall in front of you
+    if(keyDown(SDLK_UP))
+    {
+      if(worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
+      if(worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
+    }
+    //move backwards if no wall behind you
+    if(keyDown(SDLK_DOWN))
+    {
+      if(worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
+      if(worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
+    }
+    //rotate to the right
+    if(keyDown(SDLK_RIGHT))
+    {
+      //both camera direction and camera plane must be rotated
+      double oldDirX = dirX;
+      dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
+      dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
+      double oldPlaneX = planeX;
+      planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
+      planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+    }
+    //rotate to the left
+    if(keyDown(SDLK_LEFT))
+    {
+      //both camera direction and camera plane must be rotated
+      double oldDirX = dirX;
+      dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
+      dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
+      double oldPlaneX = planeX;
+      planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
+      planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
+    }
+  }
+*/
+
+
+		x++;
+	}
 }
 
 
+int hook_keypress_func(int key_code, t_god *g)
+{
+	printf("here - press\n");
+	printf("key code is : %d\n", key_code);
+	if (key_code == 65307)
+		g->exit = 1;
+	return (0);
+}
+
+int hook_keyrelease_func(int key_code, t_god *g)
+{
+	printf("here -release\n");
+	printf("key code is : %d\n", key_code);
+	print_game(g);
+	printf("in key hook p->plv : %f\n", g->plv);
+	return (0);
+}
+
+int hook_exit_func(t_god *g)
+{
+	g->exit = 1;
+	return (0);
+}
 
 int	main(int argc, char **argv)
 {
@@ -460,7 +669,8 @@ int	main(int argc, char **argv)
 	}
 	else
 	{
-		g.title = "test";
+		g.title = ft_strdup("test");
+		printf("game p : %p\n", &g);
 		print_game(&g);
 		g.win = mlx_new_window(g.mlx, g.wnd_x, g.wnd_y, g.title);
 		//*
@@ -469,25 +679,10 @@ int	main(int argc, char **argv)
 
 		print_game(&g);
 
-		int i;
-		int j;
-		i = 0;
-		while (i < g.wnd_x)
-		{	
-			j = 0;
-			while (j < g.wnd_y)
-			{
-				if (j < g.wnd_y / 2)
-					my_mlx_pixel_put(&g, i, j, g.ce_rgb);
-				else
-					my_mlx_pixel_put(&g, i, j, g.fl_rgb);
-				j++;
-			}
-			i++;
-		}
-		mlx_put_image_to_window(g.mlx, g.win, g.w_img.p, 0, 0);
-		mlx_hook(g.win, X_EVENT_KEY_PRESS, 0, &deal_key, &g);
-		mlx_hook(g.win, X_EVENT_KEY_EXIT, 0, &bye, &g);
+	    mlx_hook(g.win, 0b10, 0b11, &hook_keypress_func, &g);
+    	mlx_hook(g.win, 0b11, 0b10, &hook_keyrelease_func, &g);
+		mlx_hook(g.win, 17, 0x20000, &hook_exit_func, &g);
+		mlx_loop_hook(g.mlx, &loop_func, &g);
 		mlx_loop(g.mlx);
 	}
 	//*/
