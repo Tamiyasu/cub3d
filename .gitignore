@@ -1,4 +1,7 @@
 *.a
 *.o
+*.bmp
+*:Zone.Identifier
 .vscode/
 cub3D
+srcs/print_game.c
