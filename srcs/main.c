@@ -5,12 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/14 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 06:48:05 by tmurakam         ###   ########.fr       */
+/*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
+/*   Updated: 2020/11/14 08:58:30 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+void rotation(t_fvec *v, double rot)
+{
+	double tmpx;
+
+	tmpx = v->x;
+	v->x = v->x * cos(rot) - v->y * sin(rot);
+	v->y = tmpx * sin(rot) + v->y * cos(rot);
+}
 
 void init_god(t_god *g)
 {
@@ -78,20 +87,38 @@ void read_r(t_god *g, char *str, int line_count)
 	}
 }
 
+void set_ivec(t_ivec *v, long i, long j)
+{
+	v->i = i;
+	v->j = j;
+}
+
+void set_fvec(t_fvec *v, double x, double y)
+{
+	v->x = x;
+	v->y = y;
+}
 
 void set_r_on_map(char **map, int i, int j, t_list **lst_last)
 {
-	t_pos *tmp;
+	t_ivec *tmp;
 
 	if (map[i][j] != '1' && map[i][j] != 'R') 
 	{
 		map[i][j] = 'R';
-		tmp = malloc(sizeof(t_pos));
-		tmp->i = i;
-		tmp->j = j;
+		tmp = malloc(sizeof(t_ivec));
+		set_ivec(tmp, i, j);
 		(*lst_last)->next = ft_lstnew(tmp);
 		*lst_last = (*lst_last)->next;
 	}
+}
+
+void set_r_around(char **map, t_ivec *v, t_list **lst_last)
+{
+	set_r_on_map(map, v->i, v->j - 1, lst_last);
+	set_r_on_map(map, v->i, v->j + 1, lst_last);
+	set_r_on_map(map, v->i - 1, v->j, lst_last);
+	set_r_on_map(map, v->i + 1, v->j, lst_last);
 }
 
 void ft_lstdelhead(t_list **lst, void (*del)(void *))
@@ -103,99 +130,101 @@ void ft_lstdelhead(t_list **lst, void (*del)(void *))
 	ft_lstdelone(lst_tmp, del);
 }
 
-void map_closecheck(int i, int j, char **map, t_god *g)
+int check_around(t_god *g, char **map, t_ivec *v)
+{
+	return(v->i == 0 || v->i == g->map_h - 1 ||
+		v->j == 0 || v->j == g->map_w - 1 ||
+		map[v->i][v->j - 1] == ' ' || map[v->i - 1][v->j] == ' ' ||
+		map[v->i][v->j + 1] == ' ' || map[v->i + 1][v->j] == ' ');
+}
+
+int map_closecheck(t_ivec start_pos, char **map, t_god *g)
 {
 	t_list *lst;
 	t_list *lst_last;
-	t_pos *pos;
+	t_ivec *pos;
 
 	lst = NULL;
 	lst_last = NULL;
-	pos = malloc(sizeof(t_pos));
-	pos->i = i;
-	pos->j = j;
-	map[i][j] = 'R';
+	if (!(pos = malloc(sizeof(t_ivec))))
+		return (set_err_msg(g, "malloc error!"));
+	set_ivec(pos, start_pos.i, start_pos.j);
+	map[pos->i][pos->j] = 'R';
 
 	lst = ft_lstnew(pos);
 	lst_last = lst;
 	while(lst)
 	{
-		i = ((t_pos *)(lst->content))->i;
-		j = ((t_pos *)(lst->content))->j;
-		if (i == 0 || i == g->map_h - 1 || j == 0 || j == g->map_w - 1 || map[i][j - 1] == ' ' || map[i][j + 1] == ' ' || map[i - 1][j] == ' ' || map[i + 1][j] == ' ')
+		if (check_around(g, map, (t_ivec *)(lst->content)))
 		{
-			set_err_msg(g, "map is not closed.\n");
 			ft_lstclear(&lst, &free);
-			return;
+			return (set_err_msg(g, "map is not closed.\n"));
 		}
-		set_r_on_map(map, i, j - 1, &lst_last);
-		set_r_on_map(map, i, j + 1, &lst_last);
-		set_r_on_map(map, i - 1, j, &lst_last);
-		set_r_on_map(map, i + 1, j, &lst_last);
+		set_r_around(map, (t_ivec *)(lst->content), &lst_last);
 		ft_lstdelhead(&lst, &free);
 	}
+	return (0);
+}
+
+void free_2d(void **v, size_t i_size)
+{
+	while(i_size--)
+		free(*(v + i_size));
+	free(v);
+}
+
+void set_start_pos(t_god *g, t_ivec *p_pos)
+{
+	t_fvec player_pos;
+	t_fvec player_direction;
+	t_fvec player_view_plain;
+	double rot;
+
+	set_fvec(&player_pos, p_pos->j + 0.5, p_pos->i + 0.5);
+	set_fvec(&player_direction, -1, 0);
+	set_fvec(&player_view_plain, 0, (double)g->wnd_x / (double)g->wnd_y / 2.0);
+	rot = 0;
+	if (g->map[p_pos->i][p_pos->j] == 'S')
+		rot = M_PI;
+	else if (g->map[p_pos->i][p_pos->j] == 'E')
+		rot = -M_PI_2;
+	else if (g->map[p_pos->i][p_pos->j] == 'W')
+		rot = M_PI_2;
+	rotation(&player_direction, rot);
+	rotation(&player_view_plain, rot);
+	g->pli = player_pos.y;
+	g->plj = player_pos.x;
+	g->pdx = player_direction.x;
+	g->pdy = player_direction.y;
+	g->planex = player_view_plain.x;
+	g->planey = player_view_plain.y;
 }
 
 void map_check(t_god *g)
 {
-	int i;
-	int j;
-	int p_pos_h;
-	int p_pos_w;
+	t_ivec index_v;
+	t_ivec p_cell;
 	char **for_close_check;
 
 	for_close_check = malloc(sizeof(char *) * (g->map_h));
-	i = -1;
-	while(++i < g->map_h)
+	index_v.i = -1;
+	while(++index_v.i < g->map_h)
 	{
-		*(for_close_check + i) = ft_strdup(*(g->map + i));
-		j = -1;
-		while(++j < g->map_w)
-			if(ft_strchr("NSWE", g->map[i][j]))
+		*(for_close_check + index_v.i) = ft_strdup(*(g->map + index_v.i));
+		index_v.j = -1;
+		while(++index_v.j < g->map_w)
+			if(ft_strchr("NSWE", g->map[index_v.i][index_v.j]))
 			{
-				p_pos_h = i;
-				p_pos_w = j;
-				g->pli = i + 0.5;
-				g->plj = j + 0.5;
-				if (g->map[i][j] == 'S')
-				{
-					g->pdx = 1;
-					g->pdy = 0;
-					g->planex = 0;
-					g->planey = -(double)g->wnd_x / (double)g->wnd_y / 2.0;
-				}
-				else if (g->map[i][j] == 'E')
-				{
-					g->pdx = 0;
-					g->pdy = 1;
-					g->planex = (double)g->wnd_x / (double)g->wnd_y / 2.0;
-					g->planey = 0;
-				}
-				else if (g->map[i][j] == 'N')
-				{
-					g->pdx = -1;
-					g->pdy = 0;
-					g->planex = 0;
-					g->planey = (double)g->wnd_x / (double)g->wnd_y / 2.0;
-				}
-				else if (g->map[i][j] == 'W')
-				{
-					g->pdx = 0;
-					g->pdy = - 1;
-					g->planex = - (double)g->wnd_x / (double)g->wnd_y / 2.0;
-					g->planey = 0;
-				}
+				set_ivec(&p_cell, index_v.i, index_v.j);
+				set_start_pos(g, &p_cell);
 			}
 	}
-	map_closecheck(p_pos_h, p_pos_w, for_close_check, g);
-	i = -1;
-	while(++i < g->map_h)
-		free(*(for_close_check + i));
-	free(for_close_check);
+	map_closecheck(p_cell, for_close_check, g);
+	free_2d((void **)for_close_check, g->map_h);
 	return ;
 }
 
-void set_err_msg(t_god *g, char *msg)
+int set_err_msg(t_god *g, char *msg)
 {
 	char *free_tmp;
 
@@ -207,6 +236,7 @@ void set_err_msg(t_god *g, char *msg)
 		g->err_msg = ft_strjoin(g->err_msg, msg);
 		free(free_tmp);
 	}
+	return (0);
 }
 
 void read_color(t_god *g, char *str, int line_count)
@@ -385,7 +415,7 @@ void destroy_god(t_god *g)
 	ft_bzero(g, sizeof(t_god));
 }
 
-void load_settings(t_god *g, int argc, char **argv)
+int load_settings(t_god *g, int argc, char **argv)
 {
 	int cub_f_len;
 	int fd;
@@ -393,39 +423,27 @@ void load_settings(t_god *g, int argc, char **argv)
 	int line_count;
 
 	if (argc < 2 || 3 < argc)
-	{
-		set_err_msg(g, "Please specify the argument correctly.\n");
-		return ;
-	}
+		return (set_err_msg(g, "Please specify the argument correctly.\n"));
     if ((cub_f_len = ft_strlen(argv[1])) <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
-		set_err_msg(g, "please set '.cub' file.\n");
-	else
+		return (set_err_msg(g, "please set '.cub' file.\n"));
+	if(argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
+		return (set_err_msg(g, "plsese use \"--save\" in 2nd args\n"));
+	g->cub_fname = ft_strdup(argv[1]);
+	if(0 > (fd = open(argv[1], O_RDONLY)))
+		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
+	line_count = 0;
+	while(0 < get_next_line(fd, &line))
 	{
-		g->cub_fname = ft_strdup(argv[1]);
-		if(0 > (fd = open(argv[1], O_RDONLY)))
-		{
-			set_err_msg(g, "the '.cub' file is not exist!\n");
-			return;
-		}
-		line_count = 0;
-		while(0 < get_next_line(fd, &line))
-		{
-			interpret_line(g, line, ++line_count);
-			free(line);
-		}
 		interpret_line(g, line, ++line_count);
 		free(line);
-		line = ft_strdup("");
-		interpret_line(g, line, line_count);
-		free(line);
 	}
+	interpret_line(g, line, ++line_count);
+	free(line);
+	line = ft_strdup("");
+	interpret_line(g, line, line_count);
+	free(line);
 	if(argc == 3)
-	{
-		if (ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
-			set_err_msg(g, "plsese use \"--save\" in 2nd args\n");
-		else
-			g->bmp = 1;
-	}
+		g->bmp = 1;
 }
 
 void exit_func(t_god *g)
@@ -533,7 +551,7 @@ void verLine(int x, int drowstart, int drowend, t_god *g, double tx, t_img *im)
 	}
 }
 
-void verLine2(int x, t_god *g, int *mx, double **fmap)
+void verLine2(int x, t_god *g, int *mx)
 {
 	int i;
 	double spriteX;
@@ -630,16 +648,10 @@ void make_image(t_god *g)
 	int x;
 	int mapX;
 	int mapY;
-	double Zbuffer[g->wnd_x];
-	double **fmap;
 	int *mx;
 
-	fmap = ft_calloc(sizeof(double *), g->map_h);
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 
-	x = 0;
-	while(x < g->map_h)
-		fmap[x++] = ft_calloc(sizeof(double), g->map_w);
 	x = 0;
 	while(x < g->wnd_x)
 	{
@@ -744,17 +756,12 @@ void make_image(t_god *g)
 			tx = 1 - tx;
 			texture_img = &g->we_img;
 		}
-		Zbuffer[x] = perpWallDist;
 		//draw the pixels of the stripe as a vertical line
 		verLine(x, drawStart, drawEnd, g, tx, texture_img);
-		verLine2(x, g, mx, fmap);
+		verLine2(x, g, mx);
 		x++;
 	}
 
-	x = 0;
-	while(x < g->map_h)
-		free(fmap[x++]);
-	free(fmap);
 	free(mx);
 }
 

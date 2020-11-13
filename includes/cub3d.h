@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 06:34:47 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 07:46:01 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,18 @@ typedef struct	s_img
 	int		y_size;
 }				t_img;
 
-typedef struct	s_pos
+typedef struct	s_ivec
 {
 	int i;
 	int j;
-}				t_pos;
+}				t_ivec;
+
+typedef struct  s_dvec
+{
+	double x;
+	double y;
+}				t_fvec;
+
 
 typedef struct	s_god
 {
@@ -104,8 +111,8 @@ typedef struct	s_god
 	double		moveSpeed_sw;
 }				t_god;	
 
-void make_image(t_god *g);
-void paint_bg(t_god *g);
-void set_err_msg(t_god *g, char *msg);
+void	make_image(t_god *g);
+void	paint_bg(t_god *g);
+int		set_err_msg(t_god *g, char *msg);
 void print_game(t_god *g); //please remove before finish;
 #endif
