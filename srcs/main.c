@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:53:33 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:56:10 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,6 +346,27 @@ void	eval_conf(t_god *g, char *line, char *cfg_str, char *no_map_str)
 	}
 }
 
+void	eval_map(t_god *g, char *line, char *cfg_str, char *no_map_str)
+{
+	if (!ft_strlen(cfg_str))
+	{
+		make_mapdata(g);
+		map_check(g);
+	}
+	else if (ft_strlen(no_map_str))
+	{
+		set_err_msg(g, "[");
+		set_err_msg(g, line);
+		set_err_msg(g, "] contein unmap object char\n");
+	}
+	else
+	{
+		ft_lstadd_back(&g->map_list, ft_lstnew(ft_strdup(line)));
+		g->map_h += 1;
+		g->map_w = g->map_w < ft_strlen(line) ? ft_strlen(line) : g->map_w;
+	}
+}
+
 void	interpret_line(t_god *g, char *line)
 {
 	char *temp_str;
@@ -356,48 +377,9 @@ void	interpret_line(t_god *g, char *line)
 	non_map_parts_tmp = ft_strtrim(line, " 012NSWE");
 	
 	if (!g->map && !g->map_list)
-	{
 		eval_conf(g, line, temp_str, non_map_parts_tmp);
-		/*
-
-		if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "R ", 2))
-			read_r(g, temp_str, line_count);
-		else if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "C ", 2) || !ft_memcmp(temp_str, "F ", 2))
-			read_color(g, temp_str, line_count);
-		else if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "SO ", 3) ||
-								!ft_memcmp(temp_str, "NO ", 3) ||
-								!ft_memcmp(temp_str, "WE ", 3) ||
-								!ft_memcmp(temp_str, "EA ", 3) ||
-								!ft_memcmp(temp_str, "S ", 2))
-			read_img(g, temp_str, line_count);
-		else if (ft_strlen(temp_str) && !ft_strlen(non_map_parts_tmp))
-		{
-			ft_lstadd_back(&g->map_list, ft_lstnew(ft_strdup(line)));
-			g->map_h += 1;
-			g->map_w = ft_strlen(line);
-		}
-		*/
-	}
 	else if (!g->map)
-	{
-		if (!ft_strlen(temp_str))
-		{
-			make_mapdata(g);
-			map_check(g);
-		}
-		else if (ft_strlen(non_map_parts_tmp))
-		{
-			set_err_msg(g, "[");
-			set_err_msg(g, line);
-			set_err_msg(g, "] contein unmap object char\n");
-		}
-		else
-		{
-			ft_lstadd_back(&g->map_list, ft_lstnew(ft_strdup(line)));
-			g->map_h += 1;
-			g->map_w = g->map_w < ft_strlen(line) ? ft_strlen(line) : g->map_w;
-		}
-	}
+		eval_map(g, line, temp_str, non_map_parts_tmp);
 	else if (ft_strlen(temp_str))
 			set_err_msg(g, "It is fobbited that put any describing after map\n");
 	free(temp_str);
