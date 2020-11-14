@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 19:22:58 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 21:17:15 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,7 +493,7 @@ void	paint_bg(t_god *g)
 	}
 }
 
-void	verline(t_god *g, int x)
+void	wall_verline(t_god *g, int x)
 {
 	t_ivec			de;
 	t_ivec			tp;
@@ -514,65 +514,68 @@ void	verline(t_god *g, int x)
 	}
 }
 
-void	verline2(int x, t_god *g, int *mx)
+double	f_invdet(t_god *g)
+{
+	return (1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y));
+}
+
+t_fvec	f_transform(t_god *g, int i, int j)
+{
+	t_fvec	ret_fvec;
+	t_fvec	sprite_pos;
+
+	set_fvec(&sprite_pos, i + 0.5 - g->ppos.x, j + 0.5 - g->ppos.y);
+	ret_fvec.x = f_invdet(g) * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
+	ret_fvec.y = f_invdet(g) * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
+	return (ret_fvec);
+}
+
+void	sprt_verline(t_god *g, int x, int *mx)
 {
 	int				i;
-	t_fvec			sprite_pos;
-	double			invdet;
 	t_fvec			transform;
 	unsigned int	color;
+	unsigned int	zero_color;
 	int				ymask[g->wnd.j];
-	int				sprite_screen_x;
+	int				spr_scr_x;
 	int				sprite_height;
-	int				draw_start_y;
-	int				draw_end_y;
-	int				sprite_width;
-	int				draw_start_x;
-	int				draw_end_x;
-	int				texx;
+	t_ivec			de;
+	int				spr_w;
+	t_ivec			swe;
+	t_ivec			tex;
 	int				y;
-	int				texy;
 	int				d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
+	zero_color = *((unsigned int *)(g->s_img.addr));
 	i = 0;
 	while (mx[2 * i])
 	{
-		sprite_pos.x = (double)mx[2 * i] + 0.5 - g->ppos.x;
-		sprite_pos.y = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
-		invdet = 1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y);
-		transform.x = invdet * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
-		transform.y = invdet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
-		sprite_screen_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
+		transform = f_transform(g, mx[2 * i], mx[2 * i + 1]);
+		spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
 		sprite_height = ABS((int)(g->wnd.j / (transform.y)));
-		draw_start_y = -sprite_height / 2 + g->wnd.j / 2;
-		if (draw_start_y < 0)
-			draw_start_y = 0;
-		draw_end_y = sprite_height / 2 + g->wnd.j / 2;
-		if (draw_end_y >= g->wnd.j)
-			draw_end_y = g->wnd.j - 1;
-		sprite_width = ABS((int)(g->wnd.j/ (transform.y)));
-		draw_start_x = -sprite_width / 2 + sprite_screen_x;
-		if (draw_start_x < 0)
-			draw_start_x = 0;
-		draw_end_x = sprite_width / 2 + sprite_screen_x;
-		if (draw_end_x >= g->wnd.i)
-			draw_end_x = g->wnd.i - 1;
-		if (draw_start_x <= x && x < draw_end_x)
+		de.i = MAX(0, -sprite_height / 2 + g->wnd.j / 2);
+		de.j = MIN(sprite_height / 2 + g->wnd.j / 2, g->wnd.j - 1);
+		spr_w = ABS((int)(g->wnd.j/ (transform.y)));
+		set_ivec(&swe, -spr_w / 2 + spr_scr_x, spr_w / 2 + spr_scr_x);
+		if (swe.i <= x && x < swe.j)
 		{
-			texx = (int) (256 * (x - (-sprite_width / 2 + sprite_screen_x)) * g->s_img.x_size / sprite_width) / 256;
-			if (transform.y > 0 && x > 0 && x < g->wnd.i)
+			tex.i = (int)(((double)x - (-spr_w / 2 + spr_scr_x)) * g->s_img.x_size / spr_w);
+			if (transform.y > 0)
 			{
-				y = draw_start_y;
-				while (y < draw_end_y)
+				y = de.i;
+				while (y <= de.j)
 				{
-					d = (y) * 256 - g->wnd.j * 128 + sprite_height * 128;
-					texy = ((d * g->s_img.y_size) / sprite_height) / 256;
-					color = *((unsigned int *)(g->s_img.addr + texy * g->s_img.llen) + texx);
-					if ((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
+					d = (double)y - g->wnd.j / 2 + sprite_height / 2;
+					tex.j = (int)((d * g->s_img.y_size) / sprite_height);
+					if(0 <= tex.i && tex.i < g->s_img.x_size || 0 <= tex.j && tex.j < g->s_img.y_size)
 					{
-						ymask[y] = 1;
-						my_mlx_pixel_put(g, x, y, color);
+						color = *((unsigned int *)(g->s_img.addr + tex.j * g->s_img.llen) + tex.i);
+						if (color != zero_color && ymask[y] == 0)
+						{
+							ymask[y] = 1;
+							my_mlx_pixel_put(g, x, y, color);
+						}
 					}
 					y++;
 				}
@@ -628,15 +631,15 @@ int		find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 	mxi = 0;
 	while (g->map[mapi->i][mapi->j] != '1')
 	{
-		side = sidedist.x < sidedist.y ? 0 : 1;
-		set_mapi(mapi, &sidedist, &step);
-		sidedist = f_sidedist(g, mapi, ray_dir);
 		if (g->map[mapi->i][mapi->j] == '2')
 		{
 			mx[mxi * 2] = mapi->i;
 			mx[mxi * 2 + 1] = mapi->j;
 			mxi++;
 		}
+		side = sidedist.x < sidedist.y ? 0 : 1;
+		set_mapi(mapi, &sidedist, &step);
+		sidedist = f_sidedist(g, mapi, ray_dir);
 	}
 	return (side);
 }
@@ -686,8 +689,8 @@ void	write_vertical_line(t_god *g, int x)
 	g->i_perpdist = f_perpdist(g, &g->i_mapi, &g->i_ray_dir, g->i_side);
 	g->i_tx = f_tx(g, g->i_perpdist, &g->i_ray_dir, g->i_side);
 	g->i_img = f_texture_im(g);
-	verline(g, x);
-	verline2(x, g, mx);
+	wall_verline(g, x);
+	sprt_verline(g, x, mx);
 	free(mx);
 }
 
