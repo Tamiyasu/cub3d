@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 10:49:32 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:43:50 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@
 #define BMP_BPP 4
 #define BMP_NUM_PLANES 1
 
+# define CUB_COLOR_DUP "The cub file has double setting in ceiling or floor color.\n"
 
 
 typedef struct	s_img

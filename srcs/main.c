@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:36:09 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:43:44 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ void	my_mlx_pixel_put(t_god *g, int x, int y, int color)
 void	skip_spacis(char **str)
 {
 	while (ft_isspace(**str))
-	(*str)++;
+		(*str)++;
 }
 
-/*read digits string and set the number in *int_p  *
-*set the max       in *int_p if max_error is     0*
-*set the max_error in *int_p if max_error is NOT 0*
-*the *str pointer proceeds first char that is not digit and spacis*/
+/*read digits string and set the number in *int_p                  */
+/*set the max       in *int_p if max_error is     0                */
+/*set the max_error in *int_p if max_error is NOT 0                */
+/*the *str pointer proceeds first char that is not digit and spacis*/
 void	read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
@@ -70,7 +70,7 @@ void	read_r(t_god *g, char *str, int line_count)
 	if (g->wnd.i || g->wnd.j)
 	{
 		set_err_msg(g, "The cub file has double setting in window size.\n");
-		return;
+		return ;
 	}
 	str++;
 	read_nmb(&str, &g->wnd.i, g->scr_x, 0);
@@ -80,7 +80,7 @@ void	read_r(t_god *g, char *str, int line_count)
 	if (!g->wnd.i || !g->wnd.j)
 	{
 		set_err_msg(g, "The cub file has wrong setting in window size.\n");
-		return;
+		return ;
 	}
 }
 
@@ -147,7 +147,6 @@ int		map_closecheck(t_ivec start_pos, char **map, t_god *g)
 		return (set_err_msg(g, "malloc error!"));
 	set_ivec(pos, start_pos.i, start_pos.j);
 	map[pos->i][pos->j] = 'R';
-
 	lst = ft_lstnew(pos);
 	lst_last = lst;
 	while (lst)
@@ -199,9 +198,9 @@ void	set_start_pos(t_god *g, t_ivec *p_pos)
 
 void	map_check(t_god *g)
 {
-	t_ivec index_v;
-	t_ivec p_cell;
-	char **for_close_check;
+	t_ivec	index_v;
+	t_ivec	p_cell;
+	char	**for_close_check;
 
 	for_close_check = malloc(sizeof(char *) * (g->map_h));
 	index_v.i = -1;
@@ -254,9 +253,10 @@ void	read_color(t_god *g, char *str, int line_count)
 	str += *str == ',' ? 1 : 0;
 	read_nmb(&str, &blue, g->scr_y, 256);
 	if (*target_p != -1)
-		set_err_msg(g, "The cub file has double setting in ceiling or floor color.\n");
+		set_err_msg(g, CUB_COLOR_DUP);
 	if (255 < red || 255 < green || 255 < blue || *str)
-		set_err_msg(g, "The cub file has inaccseptable setting in ceiling or floor color.\n");
+		set_err_msg(g,
+		"The cub file has inaccseptable setting in ceiling or floor color.\n");
 	*target_p = (red << 16 | green << 8 | blue);
 }
 
@@ -289,7 +289,7 @@ void	read_img(t_god *g, char *str, int line_count)
 		set_err_msg(g, str);
 		set_err_msg(g, "] is not first one.\n");
 		free(f_name);
-		return;
+		return ;
 	}
 	target->p = mlx_xpm_file_to_image(g->mlx, f_name, &target->x_size, &target->y_size);
 	if (!target->p)
