@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:24:09 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:29:46 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,7 +446,7 @@ void	next_pl(t_god *g)
 {
 	t_fvec	step;
 	double	wdist;
-	
+
 	step.x = g->pdir.x * g->moveSpeed_ga + g->pdir.y * g->moveSpeed_sw;
 	step.y = g->pdir.y * g->moveSpeed_ga - g->pdir.x * g->moveSpeed_sw;
 	wdist = 0 < step.x ? WALLDIST : -WALLDIST;
@@ -484,7 +484,7 @@ void	paint_bg(t_god *g)
 
 	wnd.i = -1;
 	while (++wnd.i < g->wnd.i)
-	{	
+	{
 		wnd.j = -1;
 		while (++wnd.j < g->wnd.j / 2)
 			my_mlx_pixel_put(g, wnd.i, wnd.j, g->ce_rgb);
@@ -503,7 +503,6 @@ void	verline(int x, double perpdist, t_god *g, double tx, t_img *im)
 	de.i = -(int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
 	de.j = (int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
 	tp.i = (int)(tx * (double)(im->x_size));
-
 	y = de.i;
 	while (y <= de.j)
 	{
@@ -654,14 +653,14 @@ double	f_perpdist(t_god *g, t_ivec *mapi, t_fvec *ray_dir, int side)
 
 void	write_vertical_line(t_god *g, int x)
 {
-	t_ivec mapi;
-	int *mx;
-	t_fvec ray_dir;
-	t_ivec step;
-	double perpdist;
-	int side;
-	t_img *texture_img;
-	double tx;
+	t_ivec	mapi;
+	int		*mx;
+	t_fvec	ray_dir;
+	t_ivec	step;
+	double	perpdist;
+	int		side;
+	t_img	*texture_img;
+	double	tx;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 	ray_dir = f_ray_dir(g, x);
