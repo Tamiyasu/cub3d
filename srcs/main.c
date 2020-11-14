@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:25:15 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:27:43 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -605,7 +605,7 @@ void	verline2(int x, t_god *g, int *mx)
 	}
 }
 
-t_fvec f_ray_dir(t_god *g, int x)
+t_fvec	f_ray_dir(t_god *g, int x)
 {
 	t_fvec ret_fvec;
 
@@ -614,7 +614,7 @@ t_fvec f_ray_dir(t_god *g, int x)
 	return (ret_fvec);
 }
 
-t_fvec f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
+t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 {
 	t_fvec delta_dist;
 	t_fvec ret_fvec;
@@ -679,7 +679,6 @@ void	write_vertical_line(t_god *g, int x)
 	t_ivec mapi;
 	int *mx;
 	t_fvec ray_dir;
-	t_fvec sidedist;
 	t_ivec step;
 	double perpdist;
 	int side;
@@ -690,7 +689,6 @@ void	write_vertical_line(t_god *g, int x)
 	ray_dir = f_ray_dir(g, x);
 	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
 	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
-	sidedist = f_sidedist(g, &mapi, &ray_dir);
 	find_wall_and_splite(g, &ray_dir, &mapi, &side, mx);
 	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
 	if (side == 0)
