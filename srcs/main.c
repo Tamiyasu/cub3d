@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:16:04 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:21:18 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,7 +402,6 @@ void	destroy_god(t_god *g)
 		free(*(g->map + g->map_h--));
 	free(g->map);
 	free(g->mlx);
-	free(g->title);
 	free(g->err_msg);
 	free(g->cub_fname);
 	free(g->bmp_fname);
@@ -430,11 +429,8 @@ int		load_settings(t_god *g, int argc, char **argv)
 	interpret_line(g, line);
 	line = ft_strdup("");
 	interpret_line(g, line);
-	if (argc == 3)
-		g->bmp = 1;
+	g->bmp = argc == 3 ? 1 : 0;
 	mlx_do_key_autorepeatoff(g->mlx);
-	if (!(g->title = ft_strdup(argv[1])))
-		return (set_err_msg(g, "couldn't set the title.\n"));
 	g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
 	g->w_img.addr = mlx_get_data_addr(
 			g->w_img.p, &g->w_img.bpp, &g->w_img.llen, &g->w_img.endian);
@@ -779,7 +775,7 @@ int		main(int argc, char **argv)
 	{
 		if (!g.bmp)
 		{
-			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.title);
+			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.cub_fname);
 			mlx_hook(g.win, 0b10, 0b11, &hook_keypress_func, &g);
 			mlx_hook(g.win, 0b11, 0b10, &hook_keyrelease_func, &g);
 			mlx_hook(g.win, 17, 0x20000, &hook_exit_func, &g);
