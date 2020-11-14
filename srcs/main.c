@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:59:07 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:02:18 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ void	skip_spacis(char **str)
 		(*str)++;
 }
 
+void	read_nmb(char **str, int *int_p, int max, int max_error)
 /*
 **read digits string and set the number in *int_p
 **set the max       in *int_p if max_error is     0
 **set the max_error in *int_p if max_error is NOT 0
 **the *str pointer proceeds first char that is not digit and spacis
 */
-void	read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
 	if (ft_isdigit(**str))
@@ -380,9 +380,10 @@ void	interpret_line(t_god *g, char *line)
 	else if (!g->map)
 		eval_map(g, line, temp_str, non_map_parts_tmp);
 	else if (ft_strlen(temp_str))
-			set_err_msg(g, "Don't put any describing after map\n");
+		set_err_msg(g, "Don't put any describing after map\n");
 	free(temp_str);
 	free(non_map_parts_tmp);
+	free(line);
 }
 
 void	destroy_god(t_god *g)
@@ -430,15 +431,10 @@ int		load_settings(t_god *g, int argc, char **argv)
 	if (0 > (fd = open(argv[1], O_RDONLY)))
 		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
 	while (0 < get_next_line(fd, &line))
-	{
 		interpret_line(g, line);
-		free(line);
-	}
 	interpret_line(g, line);
-	free(line);
 	line = ft_strdup("");
 	interpret_line(g, line);
-	free(line);
 	if (argc == 3)
 		g->bmp = 1;
 	g->title = ft_strdup(argv[1]);
@@ -446,7 +442,6 @@ int		load_settings(t_god *g, int argc, char **argv)
 	g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
 	g->w_img.addr = mlx_get_data_addr(
 			g->w_img.p, &g->w_img.bpp, &g->w_img.llen, &g->w_img.endian);
-
 }
 
 void	exit_func(t_god *g)
