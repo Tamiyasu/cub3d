@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:12:14 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:15:21 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -608,11 +608,12 @@ t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 	return (ret_fvec);
 }
 
-void	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
+int		find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 {
 	int		mxi;
+	int		side;
 	t_fvec	sidedist;
-	t_ivec 	step;
+	t_ivec	step;
 
 	sidedist = f_sidedist(g, mapi, ray_dir);
 	set_ivec(&step, ray_dir->x < 0 ? -1 : 1, ray_dir->y < 0 ? -1 : 1);
@@ -623,13 +624,13 @@ void	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
 		{
 			sidedist.x += ABS(1 / ray_dir->x);
 			mapi->i += step.i;
-			*side = 0;
+			side = 0;
 		}
 		else
 		{
 			sidedist.y += ABS(1 / ray_dir->y);
 			mapi->j += step.j;
-			*side = 1;
+			side = 1;
 		}
 		if (g->map[mapi->i][mapi->j] == '2')
 		{
@@ -638,6 +639,7 @@ void	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
 			mxi++;
 		}
 	}
+	return (side);
 }
 
 double	f_perpdist(t_god *g, t_ivec *mapi, t_fvec *ray_dir, int side)
@@ -685,7 +687,7 @@ void	write_vertical_line(t_god *g, int x)
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 	ray_dir = f_ray_dir(g, x);
 	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
-	find_w_n_s(g, &ray_dir, &mapi, &side, mx);
+	side = find_w_n_s(g, &ray_dir, &mapi, mx);
 	verline(x, f_perpdist(g, &mapi, &ray_dir, side), g,
 		f_tx(g, f_perpdist(g, &mapi, &ray_dir, side), &ray_dir, side),
 		f_texture_im(g, &ray_dir, side));
