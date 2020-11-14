@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:43:50 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:46:30 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 # define ABS(x) (0 < (x)) ? (x) : -(x)
 # define MIN(a, b) ((a) < (b)) ? (a) : (b)
-# define MAX(a, b) ((a) < (b)) ? (b) : (a) 
+# define MAX(a, b) ((a) < (b)) ? (b) : (a)
 
 # define MOVESPEED 0.01
 # define ROTSPEED  0.01
@@ -42,12 +42,13 @@
 # define X_EVENT_KEY_RELEASE  3
 # define X_EVENT_KEY_EXIT    17
 
-#define BMP_HEADER_SIZE 14
-#define DIB_HEADER_SIZE 40
-#define BMP_BPP 4
-#define BMP_NUM_PLANES 1
+# define BMP_HEADER_SIZE 14
+# define DIB_HEADER_SIZE 40
+# define BMP_BPP 4
+# define BMP_NUM_PLANES 1
 
-# define CUB_COLOR_DUP "The cub file has double setting in ceiling or floor color.\n"
+# define CUB_COLOR_DUP "The cub file has double \
+setting in ceiling or floor color.\n"
 
 
 typedef struct	s_img
