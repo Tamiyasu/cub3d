@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:21:18 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:24:09 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -442,7 +442,7 @@ void	exit_func(t_god *g)
 	exit(0);
 }
 
-void	 next_pl(t_god *g)
+void	next_pl(t_god *g)
 {
 	t_fvec	step;
 	double	wdist;
@@ -458,14 +458,11 @@ void	 next_pl(t_god *g)
 	set_fvec(&g->ppos, g->ppos.x + step.x, g->ppos.y + step.y);
 }
 
-void	write_imgf(t_god *g);
-
 int		loop_func(t_god *g)
 {
 	rotation(&g->pdir, g->rotSpeed);
 	rotation(&g->pvew, g->rotSpeed);
 	next_pl(g);
-
 	paint_bg(g);
 	make_image(g);
 	if (g->exit)
@@ -498,10 +495,10 @@ void	paint_bg(t_god *g)
 
 void	verline(int x, double perpdist, t_god *g, double tx, t_img *im)
 {
-	t_ivec		de;
-	t_ivec 		tp;
-	int			y;
-	unsigned int color;
+	t_ivec			de;
+	t_ivec			tp;
+	int				y;
+	unsigned int	color;
 
 	de.i = -(int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
 	de.j = (int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;

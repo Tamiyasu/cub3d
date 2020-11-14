@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:49:37 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:22:48 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,5 +114,6 @@ void	make_image(t_god *g);
 void	paint_bg(t_god *g);
 int		set_err_msg(t_god *g, char *msg);
 void	set_ivec(t_ivec *v, long i, long j);
+void	write_imgf(t_god *g);
 
 #endif
