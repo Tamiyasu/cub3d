@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:02:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:03:56 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -666,25 +666,24 @@ double	f_tx(t_god *g, double perpdist, t_fvec *ray_dir, int side)
 t_img	*f_texture_im(t_god *g, t_fvec *ray_dir, int side)
 {
 	if (side == 0 && ray_dir->x < 0)
-		return(&g->no_img);
+		return (&g->no_img);
 	if (side == 0 && ray_dir->x > 0)
-		return(&g->so_img);
+		return (&g->so_img);
 	if (side == 1 && ray_dir->y > 0)
-		return(&g->ea_img);
+		return (&g->ea_img);
 	if (side == 1 && ray_dir->y < 0)
-		return(&g->we_img);
+		return (&g->we_img);
 }
-
 
 void	write_vertical_line(t_god *g, int x)
 {
 	t_ivec	mapi;
-	int		*mx;
-	t_fvec	ray_dir;
 	t_ivec	step;
-	double	perpdist;
-	int		side;
 	t_img	*texture_img;
+	t_fvec	ray_dir;
+	int		*mx;
+	int		side;
+	double	perpdist;
 	double	tx;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
@@ -695,7 +694,6 @@ void	write_vertical_line(t_god *g, int x)
 	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
 	tx = f_tx(g, perpdist, &ray_dir, side);
 	texture_img = f_texture_im(g, &ray_dir, side);
-	
 	verline(x, perpdist, g, tx, texture_img);
 	verline2(x, g, mx);
 	free(mx);
