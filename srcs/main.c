@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:20:05 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:21:35 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -636,7 +636,6 @@ void	make_image(t_god *g)
 	int side;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
-
 	x = 0;
 	while (x < g->wnd.i)
 	{
@@ -647,7 +646,6 @@ void	make_image(t_god *g)
 		mapindex.j = (int)(g->ppos.y);
 		deltadist.x = ABS(1 / ray_dir.x);
 		deltadist.y = ABS(1 / ray_dir.y);
-
 		if (ray_dir.x < 0)
 		{
 			step.i = -1;
@@ -697,7 +695,6 @@ void	make_image(t_god *g)
 			perpWallDist = (mapindex.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
 		else
 			perpWallDist = (mapindex.j - g->ppos.y + (1 - step.j) / 2) / ray_dir.y;
-
 		t_img *texture_img;
 		double tx;
 		if (side == 0)
@@ -726,7 +723,6 @@ void	make_image(t_god *g)
 		verline2(x, g, mx);
 		x++;
 	}
-
 	free(mx);
 }
 
