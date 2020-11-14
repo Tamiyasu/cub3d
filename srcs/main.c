@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:32:27 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:38:18 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,30 +284,24 @@ t_img	*set_target(t_god *g, char *str, int *start_pos)
 void	read_img(t_god *g, char *str, int line_count)
 {
 	char	*f_name;
-	t_img	*target;
+	t_img	*img;
 	int		start_pos;
 
-	target = set_target(g, str, &start_pos);
-
+	img = set_target(g, str, &start_pos);
 	str += start_pos;
 	f_name = ft_strtrim(str, " \t\n\v\f\r");
-	if (target->p)
+	if (img->p)
 	{
-		set_err_msg(g, "Texture configration [");
-		set_err_msg(g, str);
-		set_err_msg(g, "] is not first one.\n");
+		set_err_msg(g, "Don't set texture twice.\n");
 		free(f_name);
 		return ;
 	}
-	target->p = mlx_xpm_file_to_image(g->mlx, f_name, &target->x_size, &target->y_size);
-	if (!target->p)
-	{
-		set_err_msg(g, "Texture file [");
-		set_err_msg(g, f_name);
-		set_err_msg(g, "] is not able to load.\n");
-	}
+	img->p = mlx_xpm_file_to_image(g->mlx, f_name, &img->x_size, &img->y_size);
+	if (!img->p)
+		set_err_msg(g, "a texture file is not able to load.\n");
 	else
-		target->addr = (int *)mlx_get_data_addr(target->p, &target->bpp, &target->llen, &target->endian);
+		img->addr = (int *)mlx_get_data_addr(img->p, 
+			&img->bpp, &img->llen, &img->endian);
 	free(f_name);
 }
 
