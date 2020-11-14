@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:03:57 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:20:05 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	skip_spacis(char **str)
 	while (ft_isspace(**str))
 		(*str)++;
 }
+
 /*
 **read digits string and set the number in *int_p
 **set the max       in *int_p if max_error is     0
@@ -385,8 +386,8 @@ void	interpret_line(t_god *g, char *line, int line_count)
 }
 
 /*
-** If it do free(g->mlx), the malloced memory will be unrecable in kept in mxl_init,
-** so this program is not free the mlx pointer.
+** If do free(g->mlx), the malloced memory will be unrecable in kept in mxl_init,
+** so this program is not those mlx pointers.
 */
 void	destroy_god(t_god *g)
 {
@@ -456,8 +457,8 @@ void	exit_func(t_god *g)
 
 void	 next_pl(t_god *g)
 {
-	t_fvec step;
-	double wdist;
+	t_fvec	step;
+	double	wdist;
 	
 	step.x = g->pdx * g->moveSpeed_ga + g->pdy * g->moveSpeed_sw;
 	step.y = g->pdy * g->moveSpeed_ga - g->pdx * g->moveSpeed_sw;
@@ -473,7 +474,7 @@ void	 next_pl(t_god *g)
 
 void	next_plane(t_god *g)
 {
-	double oldx;
+	double	oldx;
 
 	oldx = g->planex;
 	g->planex = g->planex * cos(g->rotSpeed) - g->planey * sin(g->rotSpeed);
@@ -482,7 +483,9 @@ void	next_plane(t_god *g)
 
 void	next_pd(t_god *g)
 {
-	double oldpdx = g->pdx;
+	double oldpdx;
+	
+	oldpdx = g->pdx;
 	g->pdx = g->pdx * cos(g->rotSpeed) - g->pdy * sin(g->rotSpeed);
 	g->pdy = oldpdx * sin(g->rotSpeed) + g->pdy * cos(g->rotSpeed);
 }
@@ -550,51 +553,61 @@ void	verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
 void	verline2(int x, t_god *g, int *mx)
 {
 	int i;
-	double spriteX;
-	double spriteY;
+	t_fvec sprite_pos;
 	double invDet;
-	double transformX;
-	double transformY;
+	t_fvec transform;
 	unsigned int color;
 	int ymask[g->wnd.j];
+	int spriteScreenX;
+	int spriteHeight;
+	int drawStartY;
+	int drawEndY;
+	int spriteWidth;
+	int drawStartX;
+	int drawEndX;
+	int texX;
+	int y;
+	int texY;
+	int d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 
 	i = 0;
 	while (mx[2 * i])
 	{
-		spriteX = (double)mx[2 * i] + 0.5 - g->ppos.x;
-		spriteY = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
+		sprite_pos.x = (double)mx[2 * i] + 0.5 - g->ppos.x;
+		sprite_pos.y = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
 		
 		invDet = 1.0 / (g->planex * g->pdy - g->pdx * g->planey);
 
-		transformX = invDet * (g->pdy * spriteX - g->pdx * spriteY);
-		transformY = invDet * (-g->planey * spriteX + g->planex * spriteY);
+		transform.x = invDet * (g->pdy * sprite_pos.x - g->pdx * sprite_pos.y);
+		transform.y = invDet * (-g->planey * sprite_pos.x + g->planex * sprite_pos.y);
 		
-		int spriteScreenX = (int)((g->wnd.i / 2) * (1 + transformX / transformY));
-		int spriteHeight = ABS((int)(g->wnd.j/(transformY)));
-		int drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
+		spriteScreenX = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
+		spriteHeight = ABS((int)(g->wnd.j/(transform.y)));
+		drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
 		if (drawStartY < 0)
 			drawStartY = 0;
-		int drawEndY = spriteHeight / 2 + g->wnd.j / 2;
+		drawEndY = spriteHeight / 2 + g->wnd.j / 2;
 		if (drawEndY >= g->wnd.j)
 			drawEndY = g->wnd.j - 1;
-		int spriteWidth = abs((int)(g->wnd.j/ (transformY)));
-		int drawStartX = -spriteWidth / 2 + spriteScreenX;
-		if (drawStartX < 0) drawStartX = 0;
-		int drawEndX = spriteWidth / 2 + spriteScreenX;
-		if (drawEndX >= g->wnd.i) drawEndX = g->wnd.i - 1;
+		spriteWidth = ABS((int)(g->wnd.j/ (transform.y)));
+		drawStartX = -spriteWidth / 2 + spriteScreenX;
+		if (drawStartX < 0)
+			drawStartX = 0;
+		drawEndX = spriteWidth / 2 + spriteScreenX;
+		if (drawEndX >= g->wnd.i)
+			drawEndX = g->wnd.i - 1;
 		if (drawStartX <= x && x < drawEndX)
 		{
-			int texX = (int) (256 * (x - (-spriteWidth / 2 + spriteScreenX)) * g->s_img.x_size / spriteWidth) / 256;
-			if (transformY > 0 && x > 0 && x < g->wnd.i);
+			texX = (int) (256 * (x - (-spriteWidth / 2 + spriteScreenX)) * g->s_img.x_size / spriteWidth) / 256;
+			if (transform.y > 0 && x > 0 && x < g->wnd.i);
 			{
-				int y;
 				y = drawStartY;
 				while (y < drawEndY)
 				{
-					int d = (y) * 256 - g->wnd.j * 128 + spriteHeight * 128;
-					int texY = ((d * g->s_img.y_size) / spriteHeight) / 256;
+					d = (y) * 256 - g->wnd.j * 128 + spriteHeight * 128;
+					texY = ((d * g->s_img.y_size) / spriteHeight) / 256;
 					color = *((unsigned int *)(g->s_img.addr + texY * g->s_img.llen) + texX);
 					if ((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
 					{
