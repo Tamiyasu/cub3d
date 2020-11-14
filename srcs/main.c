@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:29:46 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:42:41 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -516,23 +516,23 @@ void	verline(int x, double perpdist, t_god *g, double tx, t_img *im)
 
 void	verline2(int x, t_god *g, int *mx)
 {
-	int i;
-	t_fvec sprite_pos;
-	double invdet;
-	t_fvec transform;
-	unsigned int color;
-	int ymask[g->wnd.j];
-	int sprite_screen_x;
-	int sprite_height;
-	int draw_start_y;
-	int draw_end_y;
-	int sprite_width;
-	int draw_start_x;
-	int draw_end_x;
-	int texx;
-	int y;
-	int texy;
-	int d;
+	int				i;
+	t_fvec			sprite_pos;
+	double			invdet;
+	t_fvec			transform;
+	unsigned int	color;
+	int 			ymask[g->wnd.j];
+	int 			sprite_screen_x;
+	int 			sprite_height;
+	int 			draw_start_y;
+	int 			draw_end_y;
+	int 			sprite_width;
+	int 			draw_start_x;
+	int 			draw_end_x;
+	int 			texx;
+	int 			y;
+	int 			texy;
+	int 			d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 	i = 0;
@@ -545,7 +545,7 @@ void	verline2(int x, t_god *g, int *mx)
 		transform.y = invdet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
 		sprite_screen_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
 		sprite_height = ABS((int)(g->wnd.j / (transform.y)));
-		draw_start_y = - sprite_height / 2 + g->wnd.j / 2;
+		draw_start_y = -sprite_height / 2 + g->wnd.j / 2;
 		if (draw_start_y < 0)
 			draw_start_y = 0;
 		draw_end_y = sprite_height / 2 + g->wnd.j / 2;
@@ -561,7 +561,7 @@ void	verline2(int x, t_god *g, int *mx)
 		if (draw_start_x <= x && x < draw_end_x)
 		{
 			texx = (int) (256 * (x - (-sprite_width / 2 + sprite_screen_x)) * g->s_img.x_size / sprite_width) / 256;
-			if (transform.y > 0 && x > 0 && x < g->wnd.i);
+			if (transform.y > 0 && x > 0 && x < g->wnd.i)
 			{
 				y = draw_start_y;
 				while (y < draw_end_y)
@@ -608,7 +608,7 @@ t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 	return (ret_fvec);
 }
 
-void	find_wall_and_splite(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
+void	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
 {
 	int		mxi;
 	int		hit;
@@ -666,7 +666,7 @@ void	write_vertical_line(t_god *g, int x)
 	ray_dir = f_ray_dir(g, x);
 	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
 	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
-	find_wall_and_splite(g, &ray_dir, &mapi, &side, mx);
+	find_w_n_s(g, &ray_dir, &mapi, &side, mx);
 	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
 	if (side == 0)
 	{
