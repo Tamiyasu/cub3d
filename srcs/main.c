@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:03:56 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:07:53 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -611,7 +611,6 @@ t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 void	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *side, int *mx)
 {
 	int		mxi;
-	int		hit;
 	t_fvec	sidedist;
 	t_ivec 	step;
 
@@ -679,7 +678,6 @@ void	write_vertical_line(t_god *g, int x)
 {
 	t_ivec	mapi;
 	t_ivec	step;
-	t_img	*texture_img;
 	t_fvec	ray_dir;
 	int		*mx;
 	int		side;
@@ -692,9 +690,9 @@ void	write_vertical_line(t_god *g, int x)
 	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
 	find_w_n_s(g, &ray_dir, &mapi, &side, mx);
 	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
-	tx = f_tx(g, perpdist, &ray_dir, side);
-	texture_img = f_texture_im(g, &ray_dir, side);
-	verline(x, perpdist, g, tx, texture_img);
+	verline(x, perpdist, g, 
+		f_tx(g, perpdist, &ray_dir, side), 
+		f_texture_im(g, &ray_dir, side));
 	verline2(x, g, mx);
 	free(mx);
 }
