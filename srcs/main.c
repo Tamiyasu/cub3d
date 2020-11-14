@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:27:25 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:34:39 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -534,15 +534,15 @@ void	paint_bg(t_god *g)
 	}
 }
 
-void	verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
+void	verline(int x, double perpdist, t_god *g, double tx, t_img *im)
 {
 	t_ivec		de;
 	t_ivec 		tp;
 	int			y;
 	unsigned int color;
 
-	de.i = -(int)(g->wnd.j / perpWallDist) / 2 + g->wnd.j / 2;
-	de.j = (int)(g->wnd.j / perpWallDist) / 2 + g->wnd.j / 2;
+	de.i = -(int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
+	de.j = (int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
 	tp.i = (int)(tx * (double)(im->x_size));
 
 	y = de.i;
@@ -631,13 +631,13 @@ void	verline2(int x, t_god *g, int *mx)
 void	make_image(t_god *g)
 {
 	int x;
-	t_ivec mapindex;
+	t_ivec mapi;
 	int *mx;
 	t_fvec ray_dir;
 	int hit;
 	t_fvec sidedist;
 	t_fvec deltadist;
-	double perpWallDist;
+	double perpdist;
 	t_ivec step;
 	int side;
 
@@ -648,29 +648,29 @@ void	make_image(t_god *g)
 		ft_bzero(mx, MAX(g->map_h, g->map_w) * 4 * sizeof(int));
 		ray_dir.x = g->pdx + g->planex * (2 * x / (double)(g->wnd.i) - 1);
 		ray_dir.y = g->pdy + g->planey * (2 * x / (double)(g->wnd.i) - 1);
-		mapindex.i = (int)(g->ppos.x);
-		mapindex.j = (int)(g->ppos.y);
+		mapi.i = (int)(g->ppos.x);
+		mapi.j = (int)(g->ppos.y);
 		deltadist.x = ABS(1 / ray_dir.x);
 		deltadist.y = ABS(1 / ray_dir.y);
 		if (ray_dir.x < 0)
 		{
 			step.i = -1;
-			sidedist.x = (g->ppos.x - mapindex.i) * deltadist.x;
+			sidedist.x = (g->ppos.x - mapi.i) * deltadist.x;
 		}
 		else
 		{
 			step.i = 1;
-			sidedist.x = (mapindex.i + 1.0 - g->ppos.x) * deltadist.x;
+			sidedist.x = (mapi.i + 1.0 - g->ppos.x) * deltadist.x;
 		}
 		if (ray_dir.y < 0)
 		{
 			step.j = -1;
-			sidedist.y = (g->ppos.y - mapindex.j) * deltadist.y;
+			sidedist.y = (g->ppos.y - mapi.j) * deltadist.y;
 		}
 		else
 		{
 			step.j = 1;
-			sidedist.y = (mapindex.j + 1.0 - g->ppos.y) * deltadist.y;
+			sidedist.y = (mapi.j + 1.0 - g->ppos.y) * deltadist.y;
 		}
 		int mxi = 0;
 		hit = 0;
@@ -679,38 +679,38 @@ void	make_image(t_god *g)
 			if (sidedist.x < sidedist.y)
 			{
 				sidedist.x += deltadist.x;
-				mapindex.i += step.i;
+				mapi.i += step.i;
 				side = 0;
 			}
 			else
 			{
 				sidedist.y += deltadist.y;
-				mapindex.j += step.j;
+				mapi.j += step.j;
 				side = 1;
 			}
-			if (g->map[mapindex.i][mapindex.j] == '1')
+			if (g->map[mapi.i][mapi.j] == '1')
 				hit = 1;
-			else if (g->map[mapindex.i][mapindex.j] == '2')
+			else if (g->map[mapi.i][mapi.j] == '2')
 			{
-				mx[mxi * 2] = mapindex.i;
-				mx[mxi * 2 + 1] = mapindex.j;
+				mx[mxi * 2] = mapi.i;
+				mx[mxi * 2 + 1] = mapi.j;
 				mxi++;
 			}	
 		}
 		if (side == 0)
-			perpWallDist = (mapindex.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
+			perpdist = (mapi.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
 		else
-			perpWallDist = (mapindex.j - g->ppos.y + (1 - step.j) / 2) / ray_dir.y;
+			perpdist = (mapi.j - g->ppos.y + (1 - step.j) / 2) / ray_dir.y;
 		t_img *texture_img;
 		double tx;
 		if (side == 0)
 		{
-			tx = g->ppos.y + perpWallDist * ray_dir.y;
+			tx = g->ppos.y + perpdist * ray_dir.y;
 			texture_img = &g->no_img;
 		}
 		else
 		{
-			tx = g->ppos.x + perpWallDist * ray_dir.x;
+			tx = g->ppos.x + perpdist * ray_dir.x;
 			texture_img = &g->ea_img;
 		}
 		tx -= floor(tx);
@@ -724,8 +724,7 @@ void	make_image(t_god *g)
 			tx = 1 - tx;
 			texture_img = &g->we_img;
 		}
-		//draw the pixels of the stripe as a vertical line
-		verline(x, perpWallDist, g, tx, texture_img);
+		verline(x, perpdist, g, tx, texture_img);
 		verline2(x, g, mx);
 		x++;
 	}
