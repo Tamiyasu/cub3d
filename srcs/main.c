@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 01:57:06 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 02:00:53 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,15 +414,15 @@ int		check_settings(t_god *g)
 		set_err_msg(g, "please set color for ceiling / floor\n");
 	if (!g->wnd.i || !g->wnd.j)
 		set_err_msg(g, "please set screen size.\n");
-	if (!g->ea_img.p) 
+	if (!g->ea_img.p)
 		set_err_msg(g, "please set east wall texture.\n");
-	if (!g->we_img.p) 
+	if (!g->we_img.p)
 		set_err_msg(g, "please set west  wall texture.\n");
-	if (!g->so_img.p) 
+	if (!g->so_img.p)
 		set_err_msg(g, "please set south wall texture.\n");
-	if (!g->no_img.p) 
+	if (!g->no_img.p)
 		set_err_msg(g, "please set north wall texture.\n");
-	if (!g->s_img.p) 
+	if (!g->s_img.p)
 		set_err_msg(g, "please set sprite wall texture.\n");
 	return (0);
 }
