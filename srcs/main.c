@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 22:55:54 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 01:30:23 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -538,42 +538,44 @@ t_fvec	f_transform(t_god *g, int i, int j)
 	return (ret_fvec);
 }
 
+void	write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
+{
+	int				y;
+	int				d;
+	unsigned int	color;
+	t_ivec			tex;
+
+	tex.i = (int)(((double)x - (-g->i_s_size / 2 + g->i_s_scr_x)) * g->s_img.x_size / g->i_s_size);
+	y = de->i;
+	while (y <= de->j)
+	{
+		d = (double)y - g->wnd.j / 2 + g->i_s_size / 2;
+		tex.j = (int)((d * g->s_img.y_size) / g->i_s_size);
+		color = pic_color(&g->s_img, tex.i, tex.j);
+		if (color != g->i_zero_color && ymask[y] == 0)
+		{
+			ymask[y] = 1;
+			my_mlx_pixel_put(g, x, y, color);
+		}
+		y++;
+	}
+}
+
 void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 {
 	t_fvec			transform;
-	unsigned int	color;
-	int				spr_scr_x;
 	t_ivec			de;
-	int				spr_size;
-	t_ivec			tex;
-	int				y;
-	int				d;
 
 	transform = f_transform(g, s_cell->i, s_cell->j);
-	spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
-	spr_size = ABS((int)(g->wnd.j / (transform.y)));
-	de.i = MAX(0, -spr_size / 2 + g->wnd.j / 2);
-	de.j = MIN(spr_size / 2 + g->wnd.j / 2, g->wnd.j - 1);
-	if (-spr_size / 2 + spr_scr_x <= x && x < spr_size / 2 + spr_scr_x)
-	{
-		tex.i = (int)(((double)x - (-spr_size / 2 + spr_scr_x)) * g->s_img.x_size / spr_size);
-		if (transform.y > 0)
-		{
-			y = de.i;
-			while (y <= de.j)
-			{
-				d = (double)y - g->wnd.j / 2 + spr_size / 2;
-				tex.j = (int)((d * g->s_img.y_size) / spr_size);
-				color = pic_color(&g->s_img, tex.i, tex.j);
-				if (color != g->i_zero_color && ymask[y] == 0)
-				{
-					ymask[y] = 1;
-					my_mlx_pixel_put(g, x, y, color);
-				}
-				y++;
-			}
-		}
-	}
+	g->i_s_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
+	g->i_s_size = ABS((int)(g->wnd.j / (transform.y)));
+	de.i = MAX(0, -g->i_s_size / 2 + g->wnd.j / 2);
+	de.j = MIN(g->i_s_size / 2 + g->wnd.j / 2, g->wnd.j - 1);
+	if (transform.y <= 0)
+		return ;
+	if (x < -g->i_s_size / 2 + g->i_s_scr_x || g->i_s_size / 2 + g->i_s_scr_x <= x)
+		return ;
+	write_a_sprt_loop(g, &de, x, ymask);
 }
 
 void	sprt_verline(t_god *g, int x, int *mx)
@@ -736,7 +738,6 @@ int			hook_keypress_func(int key_code, t_god *g)
 
 int			hook_keyrelease_func(int key_code, t_god *g)
 {
-	g->plv += 1.0;
 	if (key_code == KEY_CODE_W)
 		g->moveSpeed_ga -= MOVESPEED;
 	if (key_code == KEY_CODE_S)

@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 22:27:52 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 01:27:08 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,48 +74,45 @@ typedef struct  s_dvec
 
 typedef struct	s_god
 {
-	char		*cub_fname;
-	char		*bmp_fname;
-	void		*mlx;
-    void		*win;
-	t_img		w_img;
-	t_ivec		wnd;
-    int			scr_x;
-    int			scr_y;
-	char		*title;
-	t_img		ea_img;
-	t_img		we_img;
-	t_img		so_img;
-	t_img		no_img;
-	t_img		s_img;
-	int			ce_rgb;
-	int			fl_rgb;
-	char		**map;
-	int			map_h;
-	int			map_w;
-	int			bmp;
-	char		*err_msg;		
-	t_list		*map_list;
-	t_fvec		ppos;
-	t_fvec		pdir;
-	t_fvec		pvew;
-	double		pdx;
-	double		pdy;
-	double		planex;
-	double  	planey;
-	double		plv;
-	int			exit;
-	double 		rotSpeed;
-	double		moveSpeed_ga;
-	double		moveSpeed_sw;
-	t_fvec		i_ray_dir;
-	t_ivec		i_mapi;
-	int			i_side;
-	double		i_perpdist;
-	double		i_tx;
-	t_img		*i_img;
-	unsigned int i_zero_color;
-}				t_god;	
+	char			*cub_fname;
+	char			*bmp_fname;
+	void			*mlx;
+    void			*win;
+	t_img			w_img;
+	t_ivec			wnd;
+    int				scr_x;
+    int				scr_y;
+	char			*title;
+	t_img			ea_img;
+	t_img			we_img;
+	t_img			so_img;
+	t_img			no_img;
+	t_img			s_img;
+	int				ce_rgb;
+	int				fl_rgb;
+	char			**map;
+	int				map_h;
+	int				map_w;
+	int				bmp;
+	char			*err_msg;		
+	t_list			*map_list;
+	t_fvec			ppos;
+	t_fvec			pdir;
+	t_fvec			pvew;
+	int				exit;
+	double 			rotSpeed;
+	double			moveSpeed_ga;
+	double			moveSpeed_sw;
+	t_fvec			i_ray_dir;
+	t_ivec			i_mapi;
+	int				i_side;
+	double			i_perpdist;
+	double			i_tx;
+	t_img			*i_img;
+	unsigned int	i_zero_color;
+	int				i_s_scr_x;
+	int				i_s_size;
+}				t_god;
 
 void	make_image(t_god *g);
 void	paint_bg(t_god *g);
