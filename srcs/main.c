@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 10:51:54 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 10:54:10 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	init_god(t_god *g)
 	g->ce_rgb = -1;
 	g->fl_rgb = -1;
 	g->mlx = mlx_init();
-	if(!g->mlx)
+	if (!g->mlx)
 		set_err_msg(g, "Please check your XWINDOW settings\n");
 	else
 		mlx_get_screen_size(g->mlx, &g->scr_x, &g->scr_y);
@@ -43,7 +43,7 @@ void	my_mlx_pixel_put(t_god *g, int x, int y, int color)
 
 void skip_spacis(char **str)
 {
-	while(ft_isspace(**str))
+	while (ft_isspace(**str))
 	(*str)++;
 }
 
@@ -54,9 +54,9 @@ void skip_spacis(char **str)
 void read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
-	if(ft_isdigit(**str))
+	if (ft_isdigit(**str))
 		*int_p = 0;
-	while(ft_isdigit(**str))
+	while (ft_isdigit(**str))
 	{
 		*int_p = *int_p * 10 + *(*str)++ - '0';
 		if (max < *int_p)
@@ -129,7 +129,7 @@ void ft_lstdelhead(t_list **lst, void (*del)(void *))
 
 int check_around(t_god *g, char **map, t_ivec *v)
 {
-	return(v->i == 0 || v->i == g->map_h - 1 ||
+	return (v->i == 0 || v->i == g->map_h - 1 ||
 		v->j == 0 || v->j == g->map_w - 1 ||
 		map[v->i][v->j - 1] == ' ' || map[v->i - 1][v->j] == ' ' ||
 		map[v->i][v->j + 1] == ' ' || map[v->i + 1][v->j] == ' ');
@@ -150,7 +150,7 @@ int map_closecheck(t_ivec start_pos, char **map, t_god *g)
 
 	lst = ft_lstnew(pos);
 	lst_last = lst;
-	while(lst)
+	while (lst)
 	{
 		if (check_around(g, map, (t_ivec *)(lst->content)))
 		{
@@ -165,7 +165,7 @@ int map_closecheck(t_ivec start_pos, char **map, t_god *g)
 
 void free_2d(void **v, size_t i_size)
 {
-	while(i_size--)
+	while (i_size--)
 		free(*(v + i_size));
 	free(v);
 }
@@ -205,12 +205,12 @@ void map_check(t_god *g)
 
 	for_close_check = malloc(sizeof(char *) * (g->map_h));
 	index_v.i = -1;
-	while(++index_v.i < g->map_h)
+	while (++index_v.i < g->map_h)
 	{
 		*(for_close_check + index_v.i) = ft_strdup(*(g->map + index_v.i));
 		index_v.j = -1;
-		while(++index_v.j < g->map_w)
-			if(ft_strchr("NSWE", g->map[index_v.i][index_v.j]))
+		while (++index_v.j < g->map_w)
+			if (ft_strchr("NSWE", g->map[index_v.i][index_v.j]))
 			{
 				set_ivec(&p_cell, index_v.i, index_v.j);
 				set_start_pos(g, &p_cell);
@@ -333,33 +333,33 @@ void interpret_line(t_god *g, char *line, int line_count)
 	temp_str = ft_strtrim(line, " \t\n\v\f\r");
 	non_map_parts_tmp = ft_strtrim(line, " 012NSWE");
 	
-	if(!g->map && !g->map_list)
+	if (!g->map && !g->map_list)
 	{
-		if(ft_strlen(temp_str) && !ft_memcmp(temp_str, "R ", 2))
+		if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "R ", 2))
 			read_r(g, temp_str, line_count);
-		else if(ft_strlen(temp_str) && !ft_memcmp(temp_str, "C ", 2) || !ft_memcmp(temp_str, "F ", 2))
+		else if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "C ", 2) || !ft_memcmp(temp_str, "F ", 2))
 			read_color(g, temp_str, line_count);
-		else if(ft_strlen(temp_str) && !ft_memcmp(temp_str, "SO ", 3) ||
+		else if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "SO ", 3) ||
 								!ft_memcmp(temp_str, "NO ", 3) ||
 								!ft_memcmp(temp_str, "WE ", 3) ||
 								!ft_memcmp(temp_str, "EA ", 3) ||
 								!ft_memcmp(temp_str, "S ", 2))
 			read_img(g, temp_str, line_count);
-		else if(ft_strlen(temp_str) && !ft_strlen(non_map_parts_tmp))
+		else if (ft_strlen(temp_str) && !ft_strlen(non_map_parts_tmp))
 		{
 			ft_lstadd_back(&g->map_list, ft_lstnew(ft_strdup(line)));
 			g->map_h += 1;
 			g->map_w = ft_strlen(line);
 		}
 	}
-	else if(!g->map)
+	else if (!g->map)
 	{
-		if(!ft_strlen(temp_str))
+		if (!ft_strlen(temp_str))
 		{
 			make_mapdata(g);
 			map_check(g);
 		}
-		else if(ft_strlen(non_map_parts_tmp))
+		else if (ft_strlen(non_map_parts_tmp))
 		{
 			set_err_msg(g, "[");
 			set_err_msg(g, line);
@@ -373,7 +373,7 @@ void interpret_line(t_god *g, char *line, int line_count)
 		}
 	}
 	else
-		if(ft_strlen(temp_str))
+		if (ft_strlen(temp_str))
 			set_err_msg(g, "It is fobbited that put any describing after map\n");
 	free(temp_str);
 	free(non_map_parts_tmp);
@@ -401,7 +401,7 @@ void destroy_god(t_god *g)
 		mlx_destroy_window(g->mlx, g->win);
 	if (g->map_list)
 		ft_lstclear(&g->map_list, &free);
-	while(g->map_h + 1 && g->map)
+	while (g->map_h + 1 && g->map)
 		free(*(g->map + g->map_h--));
 	free(g->map);
 	free(g->mlx);
@@ -423,13 +423,13 @@ int load_settings(t_god *g, int argc, char **argv)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
 	if ((cub_f_len = ft_strlen(argv[1])) <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
 		return (set_err_msg(g, "please set '.cub' file.\n"));
-	if(argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
+	if (argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
 		return (set_err_msg(g, "plsese use \"--save\" in 2nd args\n"));
 	g->cub_fname = ft_strdup(argv[1]);
-	if(0 > (fd = open(argv[1], O_RDONLY)))
+	if (0 > (fd = open(argv[1], O_RDONLY)))
 		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
 	line_count = 0;
-	while(0 < get_next_line(fd, &line))
+	while (0 < get_next_line(fd, &line))
 	{
 		interpret_line(g, line, ++line_count);
 		free(line);
@@ -439,7 +439,7 @@ int load_settings(t_god *g, int argc, char **argv)
 	line = ft_strdup("");
 	interpret_line(g, line, line_count);
 	free(line);
-	if(argc == 3)
+	if (argc == 3)
 		g->bmp = 1;
 }
 
@@ -457,10 +457,10 @@ void  next_pl(t_god *g)
 	step.x = g->pdx * g->moveSpeed_ga + g->pdy * g->moveSpeed_sw;
 	step.y = g->pdy * g->moveSpeed_ga - g->pdx * g->moveSpeed_sw;
 	wdist = 0 < step.x ? WALLDIST : -WALLDIST;
-	if(g->map[(int)(g->ppos.x + step.x + wdist)][(int)(g->ppos.y)] == '1')
+	if (g->map[(int)(g->ppos.x + step.x + wdist)][(int)(g->ppos.y)] == '1')
 		step.x = 0;
 	wdist = 0 < step.y ? WALLDIST : -WALLDIST;
-	if(g->map[(int)(g->ppos.x)][(int)(g->ppos.y + step.y + wdist)] == '1')
+	if (g->map[(int)(g->ppos.x)][(int)(g->ppos.y + step.y + wdist)] == '1')
 		step.y = 0;
 	g->ppos.x += step.x;
 	g->ppos.y += step.y;
@@ -494,7 +494,7 @@ int loop_func(t_god *g)
 	make_image(g);
 	if (g->exit)
 		exit_func(g);
-	else if(g->bmp)
+	else if (g->bmp)
 	{
 		write_imgf(g);
 		exit_func(g);
@@ -554,7 +554,7 @@ void verLine2(int x, t_god *g, int *mx)
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 
 	i = 0;
-	while(mx[2 * i])
+	while (mx[2 * i])
 	{
 		spriteX = (double)mx[2 * i] + 0.5 - g->ppos.x;
 		spriteY = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
@@ -567,29 +567,29 @@ void verLine2(int x, t_god *g, int *mx)
 		int spriteScreenX = (int)((g->wnd.i / 2) * (1 + transformX / transformY));
 		int spriteHeight = ABS((int)(g->wnd.j/(transformY)));
 		int drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
-		if(drawStartY < 0)
+		if (drawStartY < 0)
 			drawStartY = 0;
 		int drawEndY = spriteHeight / 2 + g->wnd.j / 2;
-		if(drawEndY >= g->wnd.j)
+		if (drawEndY >= g->wnd.j)
 			drawEndY = g->wnd.j - 1;
 		int spriteWidth = abs((int)(g->wnd.j/ (transformY)));
 		int drawStartX = -spriteWidth / 2 + spriteScreenX;
-		if(drawStartX < 0) drawStartX = 0;
+		if (drawStartX < 0) drawStartX = 0;
 		int drawEndX = spriteWidth / 2 + spriteScreenX;
-		if(drawEndX >= g->wnd.i) drawEndX = g->wnd.i - 1;
+		if (drawEndX >= g->wnd.i) drawEndX = g->wnd.i - 1;
 		if (drawStartX <= x && x < drawEndX)
 		{
 			int texX = (int) (256 * (x - (-spriteWidth / 2 + spriteScreenX)) * g->s_img.x_size / spriteWidth) / 256;
-			if(transformY > 0 && x > 0 && x < g->wnd.i);
+			if (transformY > 0 && x > 0 && x < g->wnd.i);
 			{
 				int y;
 				y = drawStartY;
-				while(y < drawEndY)
+				while (y < drawEndY)
 				{
 					int d = (y) * 256 - g->wnd.j * 128 + spriteHeight * 128;
 					int texY = ((d * g->s_img.y_size) / spriteHeight) / 256;
 					color = *((unsigned int *)(g->s_img.addr + texY * g->s_img.llen) + texX);
-					if((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
+					if ((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
 					{
 						ymask[y] = 1;
 						my_mlx_pixel_put(g, x, y, color);
@@ -612,7 +612,7 @@ void make_image(t_god *g)
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 
 	x = 0;
-	while(x < g->wnd.i)
+	while (x < g->wnd.i)
 	{
 		ft_bzero(mx, MAX(g->map_h, g->map_w) * 4 * sizeof(int));
 		double cameraX = 2 * x / (double)(g->wnd.i) - 1;
@@ -631,7 +631,7 @@ void make_image(t_god *g)
 
 		int hit = 0;
 		int side;
-		if(rayDirX < 0)
+		if (rayDirX < 0)
 		{
 			stepX = -1;
 			sideDistX = (g->ppos.x - mapX) * deltaDistX;
@@ -641,7 +641,7 @@ void make_image(t_god *g)
 			stepX = 1;
 			sideDistX = (mapX + 1.0 - g->ppos.x) * deltaDistX;
 		}
-		if(rayDirY < 0)
+		if (rayDirY < 0)
 		{
 			stepY = -1;
 			sideDistY = (g->ppos.y - mapY) * deltaDistY;
@@ -654,7 +654,7 @@ void make_image(t_god *g)
 		int mxi = 0;
 		while (hit == 0)
 		{
-			if(sideDistX < sideDistY)
+			if (sideDistX < sideDistY)
 			{
 				sideDistX += deltaDistX;
 				mapX += stepX;
@@ -666,7 +666,7 @@ void make_image(t_god *g)
 				mapY += stepY;
 				side = 1;
 			}
-			if(g->map[mapX][mapY] == '1')
+			if (g->map[mapX][mapY] == '1')
 				hit = 1;
 			else if (g->map[mapX][mapY] == '2')
 			{
@@ -675,7 +675,7 @@ void make_image(t_god *g)
 				mxi++;
 			}	
 		}
-		if(side == 0)
+		if (side == 0)
 			perpWallDist = (mapX - g->ppos.x + (1 - stepX) / 2) / rayDirX;
 		else
 			perpWallDist = (mapY - g->ppos.y + (1 - stepY) / 2) / rayDirY;
@@ -688,7 +688,7 @@ void make_image(t_god *g)
 
 		t_img *texture_img;
 		double tx;
-		if(side == 0)
+		if (side == 0)
 		{
 			tx = g->ppos.y + perpWallDist * rayDirY;
 			texture_img = &g->no_img;
@@ -699,12 +699,12 @@ void make_image(t_god *g)
 			texture_img = &g->ea_img;
 		}
 		tx -= floor(tx);
-		if(side == 0 && rayDirX > 0)
+		if (side == 0 && rayDirX > 0)
 		{
 			tx = 1 - tx;
 			texture_img = &g->so_img;
 		}
-		if(side == 1 && rayDirY < 0)
+		if (side == 1 && rayDirY < 0)
 		{
 			tx = 1 - tx;
 			texture_img = &g->we_img;
@@ -788,7 +788,7 @@ int	main(int argc, char **argv)
 		mlx_do_key_autorepeatoff(g.mlx);
 		g.w_img.p = mlx_new_image(g.mlx, g.wnd.i, g.wnd.j);
 		g.w_img.addr = mlx_get_data_addr(g.w_img.p, &g.w_img.bpp, &g.w_img.llen, &g.w_img.endian);
-		if(!g.bmp)
+		if (!g.bmp)
 		{
 			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.title);
 			mlx_hook(g.win, 0b10, 0b11, &hook_keypress_func, &g);
@@ -808,7 +808,7 @@ void	littleendian(unsigned char *s, unsigned int n, int size)
 	
 	i = 0;
 	s[i++] = (unsigned char)(n);
-	while(i < size)
+	while (i < size)
 		s[i++] = (unsigned char)(n >>= 8);
 }
 
