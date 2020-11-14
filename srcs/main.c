@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:38:55 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:11:29 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,10 +192,10 @@ void	set_start_pos(t_god *g, t_ivec *p_pos)
 	rotation(&player_view_plain, rot);
 	g->ppos.x = player_pos.y;
 	g->ppos.y = player_pos.x;
-	g->pdx = player_direction.x;
-	g->pdy = player_direction.y;
-	g->planex = player_view_plain.x;
-	g->planey = player_view_plain.y;
+	g->pdir.x = player_direction.x;
+	g->pdir.y = player_direction.y;
+	g->pvew.x = player_view_plain.x;
+	g->pvew.y = player_view_plain.y;
 }
 
 void	map_check(t_god *g)
@@ -466,42 +466,23 @@ void	 next_pl(t_god *g)
 	t_fvec	step;
 	double	wdist;
 	
-	step.x = g->pdx * g->moveSpeed_ga + g->pdy * g->moveSpeed_sw;
-	step.y = g->pdy * g->moveSpeed_ga - g->pdx * g->moveSpeed_sw;
+	step.x = g->pdir.x * g->moveSpeed_ga + g->pdir.y * g->moveSpeed_sw;
+	step.y = g->pdir.y * g->moveSpeed_ga - g->pdir.x * g->moveSpeed_sw;
 	wdist = 0 < step.x ? WALLDIST : -WALLDIST;
 	if (g->map[(int)(g->ppos.x + step.x + wdist)][(int)(g->ppos.y)] == '1')
 		step.x = 0;
 	wdist = 0 < step.y ? WALLDIST : -WALLDIST;
 	if (g->map[(int)(g->ppos.x)][(int)(g->ppos.y + step.y + wdist)] == '1')
 		step.y = 0;
-	g->ppos.x += step.x;
-	g->ppos.y += step.y;
-}
-
-void	next_plane(t_god *g)
-{
-	double	oldx;
-
-	oldx = g->planex;
-	g->planex = g->planex * cos(g->rotSpeed) - g->planey * sin(g->rotSpeed);
-	g->planey = oldx * sin(g->rotSpeed) + g->planey * cos(g->rotSpeed);
-}
-
-void	next_pd(t_god *g)
-{
-	double oldpdx;
-	
-	oldpdx = g->pdx;
-	g->pdx = g->pdx * cos(g->rotSpeed) - g->pdy * sin(g->rotSpeed);
-	g->pdy = oldpdx * sin(g->rotSpeed) + g->pdy * cos(g->rotSpeed);
+	set_fvec(&g->ppos, g->ppos.x + step.x, g->ppos.y + step.y);
 }
 
 void	write_imgf(t_god *g);
 
 int		loop_func(t_god *g)
 {
-	next_pd(g);
-	next_plane(g);
+	rotation(&g->pdir, g->rotSpeed);
+	rotation(&g->pvew, g->rotSpeed);
 	next_pl(g);
 
 	paint_bg(g);
@@ -584,10 +565,10 @@ void	verline2(int x, t_god *g, int *mx)
 		sprite_pos.x = (double)mx[2 * i] + 0.5 - g->ppos.x;
 		sprite_pos.y = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
 		
-		invDet = 1.0 / (g->planex * g->pdy - g->pdx * g->planey);
+		invDet = 1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y);
 
-		transform.x = invDet * (g->pdy * sprite_pos.x - g->pdx * sprite_pos.y);
-		transform.y = invDet * (-g->planey * sprite_pos.x + g->planex * sprite_pos.y);
+		transform.x = invDet * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
+		transform.y = invDet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
 		
 		spriteScreenX = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
 		spriteHeight = ABS((int)(g->wnd.j/(transform.y)));
@@ -628,108 +609,125 @@ void	verline2(int x, t_god *g, int *mx)
 	}
 }
 
-void	make_image(t_god *g)
+t_fvec f_ray_dir(t_god *g, int x)
 {
-	int x;
+	t_fvec ret_fvec;
+
+	ret_fvec.x = g->pdir.x + g->pvew.x * (2 * x / (double)(g->wnd.i) - 1);
+	ret_fvec.y = g->pdir.y + g->pvew.y * (2 * x / (double)(g->wnd.i) - 1);
+	return (ret_fvec);
+}
+
+t_fvec f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
+{
+	t_fvec delta_dist;
+	t_fvec ret_fvec;
+
+	set_fvec(&delta_dist, ABS(1 / ray_dir->x), ABS(1 / ray_dir->y));
+	if (ray_dir->x < 0)
+		ret_fvec.x = (g->ppos.x - mapi->i) * delta_dist.x;
+	else
+		ret_fvec.x = (mapi->i + 1.0 - g->ppos.x) * delta_dist.x;
+	if (ray_dir->y < 0)
+		ret_fvec.y = (g->ppos.y - mapi->j) * delta_dist.y;
+	else
+		ret_fvec.y = (mapi->j + 1.0 - g->ppos.y) * delta_dist.y;
+	return (ret_fvec);
+}
+
+void	find_wall_and_splite(t_god *g, t_fvec *ray_dir, t_ivec *mapi, t_ivec step, int *side, int *mx)
+{
+	int 	mxi;
+	int 	hit;
+	t_fvec	sidedist;
+
+	sidedist = f_sidedist(g, mapi, ray_dir);
+	mxi = 0;
+	while (g->map[mapi->i][mapi->j] != '1')
+	{
+		if (sidedist.x < sidedist.y)
+		{
+			sidedist.x += ABS(1 / ray_dir->x);
+			mapi->i += step.i;
+			*side = 0;
+		}
+		else
+		{
+			sidedist.y += ABS(1 / ray_dir->y);
+			mapi->j += step.j;
+			*side = 1;
+		}
+		if (g->map[mapi->i][mapi->j] == '2')
+		{
+			mx[mxi * 2] = mapi->i;
+			mx[mxi * 2 + 1] = mapi->j;
+			mxi++;
+		}
+	}
+}
+
+double	f_perpdist(t_god *g, t_ivec *mapi, t_ivec *step, t_fvec *ray_dir, int side)
+{
+	return (side == 0 ?
+		(mapi->i - g->ppos.x + (1 - step->i) / 2) / ray_dir->x :
+		(mapi->j - g->ppos.y + (1 - step->j) / 2) / ray_dir->y);
+}
+
+void	write_vertical_line(t_god *g, int x)
+{
 	t_ivec mapi;
 	int *mx;
 	t_fvec ray_dir;
-	int hit;
 	t_fvec sidedist;
 	t_fvec deltadist;
-	double perpdist;
 	t_ivec step;
+	double perpdist;
 	int side;
-	int mxi;
+	t_img *texture_img;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
+	ray_dir = f_ray_dir(g, x);
+	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
+	set_fvec(&deltadist, ABS(1 / ray_dir.x), ABS(1 / ray_dir.y));
+	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
+	sidedist = f_sidedist(g, &mapi, &ray_dir);
+	find_wall_and_splite(g, &ray_dir, &mapi, step, &side, mx);
+	perpdist = f_perpdist(g, &mapi, &step, &ray_dir, side);
+
+	double tx;
+	if (side == 0)
+	{
+		tx = g->ppos.y + perpdist * ray_dir.y;
+		texture_img = &g->no_img;
+	}
+	else
+	{
+		tx = g->ppos.x + perpdist * ray_dir.x;
+		texture_img = &g->ea_img;
+	}
+	tx -= floor(tx);
+	if (side == 0 && ray_dir.x > 0)
+		{
+		tx = 1 - tx;
+		texture_img = &g->so_img;
+	}
+	if (side == 1 && ray_dir.y < 0)
+	{
+		tx = 1 - tx;
+		texture_img = &g->we_img;
+	}
+	verline(x, perpdist, g, tx, texture_img);
+	verline2(x, g, mx);
+	free(mx);
+}
+
+void	make_image(t_god *g)
+{
+	int x;
+
 	x = 0;
 	while (x < g->wnd.i)
-	{
-		ft_bzero(mx, MAX(g->map_h, g->map_w) * 4 * sizeof(int));
-		ray_dir.x = g->pdx + g->planex * (2 * x / (double)(g->wnd.i) - 1);
-		ray_dir.y = g->pdy + g->planey * (2 * x / (double)(g->wnd.i) - 1);
-		mapi.i = (int)(g->ppos.x);
-		mapi.j = (int)(g->ppos.y);
-		deltadist.x = ABS(1 / ray_dir.x);
-		deltadist.y = ABS(1 / ray_dir.y);
-		if (ray_dir.x < 0)
-		{
-			step.i = -1;
-			sidedist.x = (g->ppos.x - mapi.i) * deltadist.x;
-		}
-		else
-		{
-			step.i = 1;
-			sidedist.x = (mapi.i + 1.0 - g->ppos.x) * deltadist.x;
-		}
-		if (ray_dir.y < 0)
-		{
-			step.j = -1;
-			sidedist.y = (g->ppos.y - mapi.j) * deltadist.y;
-		}
-		else
-		{
-			step.j = 1;
-			sidedist.y = (mapi.j + 1.0 - g->ppos.y) * deltadist.y;
-		}
-		mxi = 0;
-		hit = 0;
-		while (hit == 0)
-		{
-			if (sidedist.x < sidedist.y)
-			{
-				sidedist.x += deltadist.x;
-				mapi.i += step.i;
-				side = 0;
-			}
-			else
-			{
-				sidedist.y += deltadist.y;
-				mapi.j += step.j;
-				side = 1;
-			}
-			if (g->map[mapi.i][mapi.j] == '1')
-				hit = 1;
-			else if (g->map[mapi.i][mapi.j] == '2')
-			{
-				mx[mxi * 2] = mapi.i;
-				mx[mxi * 2 + 1] = mapi.j;
-				mxi++;
-			}
-		}
-		if (side == 0)
-			perpdist = (mapi.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
-		else
-			perpdist = (mapi.j - g->ppos.y + (1 - step.j) / 2) / ray_dir.y;
-		t_img *texture_img;
-		double tx;
-		if (side == 0)
-		{
-			tx = g->ppos.y + perpdist * ray_dir.y;
-			texture_img = &g->no_img;
-		}
-		else
-		{
-			tx = g->ppos.x + perpdist * ray_dir.x;
-			texture_img = &g->ea_img;
-		}
-		tx -= floor(tx);
-		if (side == 0 && ray_dir.x > 0)
-		{
-			tx = 1 - tx;
-			texture_img = &g->so_img;
-		}
-		if (side == 1 && ray_dir.y < 0)
-		{
-			tx = 1 - tx;
-			texture_img = &g->we_img;
-		}
-		verline(x, perpdist, g, tx, texture_img);
-		verline2(x, g, mx);
-		x++;
-	}
-	free(mx);
+		write_vertical_line(g, x++);
 }
 
 int			hook_keypress_func(int key_code, t_god *g)
