@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:11:29 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:21:18 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -558,18 +558,14 @@ void	verline2(int x, t_god *g, int *mx)
 	int d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
-
 	i = 0;
 	while (mx[2 * i])
 	{
 		sprite_pos.x = (double)mx[2 * i] + 0.5 - g->ppos.x;
 		sprite_pos.y = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
-		
 		invDet = 1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y);
-
 		transform.x = invDet * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
 		transform.y = invDet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
-		
 		spriteScreenX = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
 		spriteHeight = ABS((int)(g->wnd.j/(transform.y)));
 		drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
@@ -637,8 +633,8 @@ t_fvec f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 
 void	find_wall_and_splite(t_god *g, t_fvec *ray_dir, t_ivec *mapi, t_ivec step, int *side, int *mx)
 {
-	int 	mxi;
-	int 	hit;
+	int		mxi;
+	int		hit;
 	t_fvec	sidedist;
 
 	sidedist = f_sidedist(g, mapi, ray_dir);
@@ -679,22 +675,19 @@ void	write_vertical_line(t_god *g, int x)
 	int *mx;
 	t_fvec ray_dir;
 	t_fvec sidedist;
-	t_fvec deltadist;
 	t_ivec step;
 	double perpdist;
 	int side;
 	t_img *texture_img;
+	double tx;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 	ray_dir = f_ray_dir(g, x);
 	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
-	set_fvec(&deltadist, ABS(1 / ray_dir.x), ABS(1 / ray_dir.y));
 	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
 	sidedist = f_sidedist(g, &mapi, &ray_dir);
 	find_wall_and_splite(g, &ray_dir, &mapi, step, &side, mx);
 	perpdist = f_perpdist(g, &mapi, &step, &ray_dir, side);
-
-	double tx;
 	if (side == 0)
 	{
 		tx = g->ppos.y + perpdist * ray_dir.y;
