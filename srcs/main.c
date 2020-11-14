@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:30:54 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:36:09 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	my_mlx_pixel_put(t_god *g, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-void skip_spacis(char **str)
+void	skip_spacis(char **str)
 {
 	while (ft_isspace(**str))
 	(*str)++;
@@ -51,7 +51,7 @@ void skip_spacis(char **str)
 *set the max       in *int_p if max_error is     0*
 *set the max_error in *int_p if max_error is NOT 0*
 *the *str pointer proceeds first char that is not digit and spacis*/
-void read_nmb(char **str, int *int_p, int max, int max_error)
+void	read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
 	if (ft_isdigit(**str))
@@ -65,7 +65,7 @@ void read_nmb(char **str, int *int_p, int max, int max_error)
 	skip_spacis(str);
 }
 
-void read_r(t_god *g, char *str, int line_count)
+void	read_r(t_god *g, char *str, int line_count)
 {
 	if (g->wnd.i || g->wnd.j)
 	{
@@ -84,19 +84,19 @@ void read_r(t_god *g, char *str, int line_count)
 	}
 }
 
-void set_ivec(t_ivec *v, long i, long j)
+void	set_ivec(t_ivec *v, long i, long j)
 {
 	v->i = i;
 	v->j = j;
 }
 
-void set_fvec(t_fvec *v, double x, double y)
+void	set_fvec(t_fvec *v, double x, double y)
 {
 	v->x = x;
 	v->y = y;
 }
 
-void set_r_on_map(char **map, int i, int j, t_list **lst_last)
+void	set_r_on_map(char **map, int i, int j, t_list **lst_last)
 {
 	t_ivec *tmp;
 
@@ -110,7 +110,7 @@ void set_r_on_map(char **map, int i, int j, t_list **lst_last)
 	}
 }
 
-void set_r_around(char **map, t_ivec *v, t_list **lst_last)
+void	set_r_around(char **map, t_ivec *v, t_list **lst_last)
 {
 	set_r_on_map(map, v->i, v->j - 1, lst_last);
 	set_r_on_map(map, v->i, v->j + 1, lst_last);
@@ -118,7 +118,7 @@ void set_r_around(char **map, t_ivec *v, t_list **lst_last)
 	set_r_on_map(map, v->i + 1, v->j, lst_last);
 }
 
-void ft_lstdelhead(t_list **lst, void (*del)(void *))
+void	ft_lstdelhead(t_list **lst, void (*del)(void *))
 {
 	t_list *lst_tmp;
 
@@ -127,7 +127,7 @@ void ft_lstdelhead(t_list **lst, void (*del)(void *))
 	ft_lstdelone(lst_tmp, del);
 }
 
-int check_around(t_god *g, char **map, t_ivec *v)
+int		check_around(t_god *g, char **map, t_ivec *v)
 {
 	return (v->i == 0 || v->i == g->map_h - 1 ||
 		v->j == 0 || v->j == g->map_w - 1 ||
@@ -135,7 +135,7 @@ int check_around(t_god *g, char **map, t_ivec *v)
 		map[v->i][v->j + 1] == ' ' || map[v->i + 1][v->j] == ' ');
 }
 
-int map_closecheck(t_ivec start_pos, char **map, t_god *g)
+int		map_closecheck(t_ivec start_pos, char **map, t_god *g)
 {
 	t_list *lst;
 	t_list *lst_last;
@@ -163,14 +163,14 @@ int map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	return (0);
 }
 
-void free_2d(void **v, size_t i_size)
+void	free_2d(void **v, size_t i_size)
 {
 	while (i_size--)
 		free(*(v + i_size));
 	free(v);
 }
 
-void set_start_pos(t_god *g, t_ivec *p_pos)
+void	set_start_pos(t_god *g, t_ivec *p_pos)
 {
 	t_fvec player_pos;
 	t_fvec player_direction;
@@ -197,7 +197,7 @@ void set_start_pos(t_god *g, t_ivec *p_pos)
 	g->planey = player_view_plain.y;
 }
 
-void map_check(t_god *g)
+void	map_check(t_god *g)
 {
 	t_ivec index_v;
 	t_ivec p_cell;
@@ -221,7 +221,7 @@ void map_check(t_god *g)
 	return ;
 }
 
-int set_err_msg(t_god *g, char *msg)
+int		set_err_msg(t_god *g, char *msg)
 {
 	char *free_tmp;
 
@@ -236,7 +236,7 @@ int set_err_msg(t_god *g, char *msg)
 	return (0);
 }
 
-void read_color(t_god *g, char *str, int line_count)
+void	read_color(t_god *g, char *str, int line_count)
 {
 	int *target_p;
 	int red;
@@ -260,7 +260,7 @@ void read_color(t_god *g, char *str, int line_count)
 	*target_p = (red << 16 | green << 8 | blue);
 }
 
-void read_img(t_god *g, char *str, int line_count)
+void	read_img(t_god *g, char *str, int line_count)
 {
 	char *f_name;
 	t_img *target;
@@ -303,13 +303,12 @@ void read_img(t_god *g, char *str, int line_count)
 	free(f_name);
 }
 
-void make_mapdata(t_god *g)
+void	make_mapdata(t_god *g)
 {
 	int i;
 	t_list *list_p;
 
 	list_p = g->map_list;
-
 	g->map = malloc(sizeof(char *) * (g->map_h + 1));
 	*(g->map + g->map_h) = 0;
 	i = 0;
@@ -324,7 +323,7 @@ void make_mapdata(t_god *g)
 	}
 }
 
-void interpret_line(t_god *g, char *line, int line_count)
+void	interpret_line(t_god *g, char *line, int line_count)
 {
 	char *temp_str;
 	char *non_map_parts_tmp;
@@ -372,8 +371,7 @@ void interpret_line(t_god *g, char *line, int line_count)
 			g->map_w = g->map_w < ft_strlen(line) ? ft_strlen(line) : g->map_w;
 		}
 	}
-	else
-		if (ft_strlen(temp_str))
+	else if (ft_strlen(temp_str))
 			set_err_msg(g, "It is fobbited that put any describing after map\n");
 	free(temp_str);
 	free(non_map_parts_tmp);
@@ -383,7 +381,7 @@ void interpret_line(t_god *g, char *line, int line_count)
 ** If it do free(g->mlx), the malloced memory will be unrecable in kept in mxl_init,
 ** so this program is not free the mlx pointer.
 */
-void destroy_god(t_god *g)
+void	destroy_god(t_god *g)
 {
 	if (g->s_img.p)
 		mlx_destroy_image(g->mlx, g->s_img.p);
@@ -412,7 +410,7 @@ void destroy_god(t_god *g)
 	ft_bzero(g, sizeof(t_god));
 }
 
-int load_settings(t_god *g, int argc, char **argv)
+int		load_settings(t_god *g, int argc, char **argv)
 {
 	int cub_f_len;
 	int fd;
@@ -443,13 +441,13 @@ int load_settings(t_god *g, int argc, char **argv)
 		g->bmp = 1;
 }
 
-void exit_func(t_god *g)
+void	exit_func(t_god *g)
 {
 	destroy_god(g);
 	exit(0);
 }
 
-void  next_pl(t_god *g)
+void	 next_pl(t_god *g)
 {
 	t_fvec step;
 	double wdist;
@@ -466,7 +464,7 @@ void  next_pl(t_god *g)
 	g->ppos.y += step.y;
 }
 
-void next_plane(t_god *g)
+void	next_plane(t_god *g)
 {
 	double oldx;
 
@@ -475,16 +473,16 @@ void next_plane(t_god *g)
 	g->planey = oldx * sin(g->rotSpeed) + g->planey * cos(g->rotSpeed);
 }
 
-void next_pd(t_god *g)
+void	next_pd(t_god *g)
 {
 	double oldpdx = g->pdx;
 	g->pdx = g->pdx * cos(g->rotSpeed) - g->pdy * sin(g->rotSpeed);
 	g->pdy = oldpdx * sin(g->rotSpeed) + g->pdy * cos(g->rotSpeed);
 }
 
-void write_imgf(t_god *g);
+void	write_imgf(t_god *g);
 
-int loop_func(t_god *g)
+int		loop_func(t_god *g)
 {
 	next_pd(g);
 	next_plane(g);
@@ -505,7 +503,7 @@ int loop_func(t_god *g)
 	return (0);
 }
 
-void paint_bg(t_god *g)
+void	paint_bg(t_god *g)
 {
 	t_ivec wnd;
 
@@ -520,7 +518,7 @@ void paint_bg(t_god *g)
 	}
 }
 
-void verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
+void	verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
 {
 	t_ivec		de;
 	t_ivec 		tp;
@@ -542,7 +540,7 @@ void verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
 	}
 }
 
-void verline2(int x, t_god *g, int *mx)
+void	verline2(int x, t_god *g, int *mx)
 {
 	int i;
 	double spriteX;
@@ -604,7 +602,7 @@ void verline2(int x, t_god *g, int *mx)
 	}
 }
 
-void make_image(t_god *g)
+void	make_image(t_god *g)
 {
 	int x;
 	t_ivec mapindex;
@@ -712,7 +710,7 @@ void make_image(t_god *g)
 	free(mx);
 }
 
-int		hook_keypress_func(int key_code, t_god *g)
+int			hook_keypress_func(int key_code, t_god *g)
 {
 	if (key_code == KEY_CODE_W)
 		g->moveSpeed_ga += MOVESPEED;
@@ -735,7 +733,7 @@ int		hook_keypress_func(int key_code, t_god *g)
 	return (0);
 }
 
-int		hook_keyrelease_func(int key_code, t_god *g)
+int			hook_keyrelease_func(int key_code, t_god *g)
 {
 	g->plv += 1.0;
 	if (key_code == KEY_CODE_W)
@@ -757,13 +755,13 @@ int		hook_keyrelease_func(int key_code, t_god *g)
 	return (0);
 }
 
-int hook_exit_func(t_god *g)
+int		hook_exit_func(t_god *g)
 {
 	g->exit = 1;
 	return (0);
 }
 
-int	main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	t_god	g;
 
@@ -824,7 +822,7 @@ void	write_header(int fd, t_god *g)
 	write(fd, header, BMP_HEADER_SIZE + DIB_HEADER_SIZE);
 }
 
-int		write_pixels(int fd, t_god *g)
+int			write_pixels(int fd, t_god *g)
 {
 	t_ivec			it;
 	unsigned char	*line;
