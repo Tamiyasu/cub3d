@@ -6,13 +6,13 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 08:58:30 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 09:03:44 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void rotation(t_fvec *v, double rot)
+void	rotation(t_fvec *v, double rot)
 {
 	double tmpx;
 
@@ -21,9 +21,9 @@ void rotation(t_fvec *v, double rot)
 	v->y = tmpx * sin(rot) + v->y * cos(rot);
 }
 
-void init_god(t_god *g)
+void	init_god(t_god *g)
 {
-    ft_bzero(g, sizeof(t_god));
+	ft_bzero(g, sizeof(t_god));
 	g->ce_rgb = -1;
 	g->fl_rgb = -1;
 	g->mlx = mlx_init();
@@ -33,12 +33,12 @@ void init_god(t_god *g)
 		mlx_get_screen_size(g->mlx, &g->scr_x, &g->scr_y);
 }
 
-void            my_mlx_pixel_put(t_god *g, int x, int y, int color)
+void	my_mlx_pixel_put(t_god *g, int x, int y, int color)
 {
-    char    *dst;
+	char	*dst;
 
-    dst = g->w_img.addr + (y * g->w_img.llen + x * (g->w_img.bpp / 8));
-    *(unsigned int*)dst = color;
+	dst = g->w_img.addr + (y * g->w_img.llen + x * (g->w_img.bpp / 8));
+	*(unsigned int*)dst = color;
 }
 
 void skip_spacis(char **str)
@@ -48,9 +48,9 @@ void skip_spacis(char **str)
 }
 
 /*read digits string and set the number in *int_p  *
- *set the max       in *int_p if max_error is     0*
- *set the max_error in *int_p if max_error is NOT 0*
- *the *str pointer proceeds first char that is not digit and spacis*/
+*set the max       in *int_p if max_error is     0*
+*set the max_error in *int_p if max_error is NOT 0*
+*the *str pointer proceeds first char that is not digit and spacis*/
 void read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
@@ -103,7 +103,7 @@ void set_r_on_map(char **map, int i, int j, t_list **lst_last)
 {
 	t_ivec *tmp;
 
-	if (map[i][j] != '1' && map[i][j] != 'R') 
+	if (map[i][j] != '1' && map[i][j] != 'R')
 	{
 		map[i][j] = 'R';
 		tmp = malloc(sizeof(t_ivec));
@@ -355,7 +355,7 @@ void interpret_line(t_god *g, char *line, int line_count)
 			g->map_w = ft_strlen(line);
 		}
 	}
-	else if(!g->map) 
+	else if(!g->map)
 	{
 		if(!ft_strlen(temp_str))
 		{
@@ -424,7 +424,7 @@ int load_settings(t_god *g, int argc, char **argv)
 
 	if (argc < 2 || 3 < argc)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
-    if ((cub_f_len = ft_strlen(argv[1])) <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
+	if ((cub_f_len = ft_strlen(argv[1])) <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
 		return (set_err_msg(g, "please set '.cub' file.\n"));
 	if(argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
 		return (set_err_msg(g, "plsese use \"--save\" in 2nd args\n"));
@@ -477,7 +477,7 @@ void next_plane(t_god *g)
 
 	oldx = g->planex;
 	g->planex = g->planex * cos(g->rotSpeed) - g->planey * sin(g->rotSpeed);
-    g->planey = oldx * sin(g->rotSpeed) + g->planey * cos(g->rotSpeed);
+	g->planey = oldx * sin(g->rotSpeed) + g->planey * cos(g->rotSpeed);
 }
 
 void next_pd(t_god *g)
@@ -575,28 +575,28 @@ void verLine2(int x, t_god *g, int *mx)
 		//double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
 
 		transformX = invDet * (g->pdy * spriteX - g->pdx * spriteY);
-	    //double transformX = invDet * (dirY * spriteX - dirX * spriteY);
+		//double transformX = invDet * (dirY * spriteX - dirX * spriteY);
 		transformY = invDet * (-g->planey * spriteX + g->planex * spriteY);
-        //double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
+		//double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
 		
-        //calculate height of the sprite on screen
-  		int spriteScreenX = (int)((g->wnd_x / 2) * (1 + transformX / transformY));
-        //int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
+		//calculate height of the sprite on screen
+		int spriteScreenX = (int)((g->wnd_x / 2) * (1 + transformX / transformY));
+		//int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
 		int spriteHeight = ABS((int)(g->wnd_y/(transformY)));
-        //int spriteHeight = abs(int(h / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
-        //calculate lowest and highest pixel to fill in current stripe
+		//int spriteHeight = abs(int(h / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
+		//calculate lowest and highest pixel to fill in current stripe
 		int drawStartY = - spriteHeight / 2 + g->wnd_y / 2;
-        //int drawStartY = -spriteHeight / 2 + h / 2;
-	    if(drawStartY < 0) 
+		//int drawStartY = -spriteHeight / 2 + h / 2;
+		if(drawStartY < 0)
 			drawStartY = 0;
-        //if(drawStartY < 0) drawStartY = 0;
-      	int drawEndY = spriteHeight / 2 + g->wnd_y / 2;
-        //int drawEndY = spriteHeight / 2 + h / 2;
-      	if(drawEndY >= g->wnd_y) 
-		  	drawEndY = g->wnd_y - 1;
-        //if(drawEndY >= h) drawEndY = h - 1;
+		//if(drawStartY < 0) drawStartY = 0;
+		int drawEndY = spriteHeight / 2 + g->wnd_y / 2;
+		//int drawEndY = spriteHeight / 2 + h / 2;
+		if(drawEndY >= g->wnd_y)
+			drawEndY = g->wnd_y - 1;
+		//if(drawEndY >= h) drawEndY = h - 1;
 
-	    //calculate width of the sprite
+		//calculate width of the sprite
 		int spriteWidth = abs((int)(g->wnd_y/ (transformY)));
 		int drawStartX = -spriteWidth / 2 + spriteScreenX;
 		if(drawStartX < 0) drawStartX = 0;
@@ -609,7 +609,7 @@ void verLine2(int x, t_god *g, int *mx)
 		//if(drawEndX >= w) drawEndX = w - 1;
 
 
-        //loop through every vertical stripe of the sprite on screen
+		//loop through every vertical stripe of the sprite on screen
 		if (drawStartX <= x && x < drawEndX)
 		//for(int stripe = drawStartX; stripe < drawEndX; stripe++)
 		{
@@ -674,16 +674,16 @@ void make_image(t_god *g)
 		int side;
 		if(rayDirX < 0)
 		{
-        	stepX = -1;
-        	sideDistX = (g->pli - mapX) * deltaDistX;
-	    }
-	    else
+			stepX = -1;
+			sideDistX = (g->pli - mapX) * deltaDistX;
+		}
+		else
 		{
-        	stepX = 1;
-	        sideDistX = (mapX + 1.0 - g->pli) * deltaDistX;
-      	}
-      	if(rayDirY < 0)
-      	{
+			stepX = 1;
+			sideDistX = (mapX + 1.0 - g->pli) * deltaDistX;
+		}
+		if(rayDirY < 0)
+		{
 			stepY = -1;
 			sideDistY = (g->plj - mapY) * deltaDistY;
 		}
@@ -695,20 +695,20 @@ void make_image(t_god *g)
 		int mxi = 0;
 		while (hit == 0)
 		{
-	        //jump to next map square, OR in x-direction, OR in y-direction
-    	    if(sideDistX < sideDistY)
-        	{
+			//jump to next map square, OR in x-direction, OR in y-direction
+			if(sideDistX < sideDistY)
+			{
 				sideDistX += deltaDistX;
 				mapX += stepX;
 				side = 0;
-	        }
-	        else
-    	    {
+			}
+			else
+			{
 				sideDistY += deltaDistY;
 				mapY += stepY;
 				side = 1;
-	        }
-    	    //Check if ray has hit a wall
+			}
+			//Check if ray has hit a wall
 			if(g->map[mapX][mapY] == '1')
 				hit = 1;
 			else if (g->map[mapX][mapY] == '2')
@@ -718,16 +718,16 @@ void make_image(t_god *g)
 				mx[mxi * 2 + 1] = mapY;
 				mxi++;
 			}	
-	    }
-     	//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
+		}
+		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
 		if(side == 0)
-		  	perpWallDist = (mapX - g->pli + (1 - stepX) / 2) / rayDirX;
-     	else
-		 	perpWallDist = (mapY - g->plj + (1 - stepY) / 2) / rayDirY;
-	    //Calculate height of line to draw on screen
-    	int lineHeight = (int)(g->wnd_y / perpWallDist);
+			perpWallDist = (mapX - g->pli + (1 - stepX) / 2) / rayDirX;
+		else
+			perpWallDist = (mapY - g->plj + (1 - stepY) / 2) / rayDirY;
+		//Calculate height of line to draw on screen
+		int lineHeight = (int)(g->wnd_y / perpWallDist);
 
-	    //calculate lowest and highest pixel to fill in current stripe
+		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart;
 		drawStart = -lineHeight / 2 + g->wnd_y / 2;
 		int drawEnd;
@@ -740,13 +740,13 @@ void make_image(t_god *g)
 			tx = g->plj + perpWallDist * rayDirY;
 			texture_img = &g->no_img;
 		}
-		else          
+		else
 		{
-		  	tx = g->pli + perpWallDist * rayDirX;
+			tx = g->pli + perpWallDist * rayDirX;
 			texture_img = &g->ea_img;
 		}
 		tx -= floor(tx);
-		if(side == 0 && rayDirX > 0) 
+		if(side == 0 && rayDirX > 0)
 		{
 			tx = 1 - tx;
 			texture_img = &g->so_img;
