@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:42:41 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:02:01 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -521,18 +521,18 @@ void	verline2(int x, t_god *g, int *mx)
 	double			invdet;
 	t_fvec			transform;
 	unsigned int	color;
-	int 			ymask[g->wnd.j];
-	int 			sprite_screen_x;
-	int 			sprite_height;
-	int 			draw_start_y;
-	int 			draw_end_y;
-	int 			sprite_width;
-	int 			draw_start_x;
-	int 			draw_end_x;
-	int 			texx;
-	int 			y;
-	int 			texy;
-	int 			d;
+	int				ymask[g->wnd.j];
+	int				sprite_screen_x;
+	int				sprite_height;
+	int				draw_start_y;
+	int				draw_end_y;
+	int				sprite_width;
+	int				draw_start_x;
+	int				draw_end_x;
+	int				texx;
+	int				y;
+	int				texy;
+	int				d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 	i = 0;
@@ -651,6 +651,31 @@ double	f_perpdist(t_god *g, t_ivec *mapi, t_fvec *ray_dir, int side)
 		(mapi->j - g->ppos.y + (1 - step.j) / 2) / ray_dir->y);
 }
 
+double	f_tx(t_god *g, double perpdist, t_fvec *ray_dir, int side)
+{
+	double ret_f;
+
+	ret_f = side == 0 ? g->ppos.y + perpdist * ray_dir->y :
+						g->ppos.x + perpdist * ray_dir->x;
+	ret_f -= floor(ret_f);
+	if ((side == 0 && ray_dir->x > 0) || (side == 1 && ray_dir->y < 0))
+		ret_f = 1 - ret_f;
+	return (ret_f);
+}
+
+t_img	*f_texture_im(t_god *g, t_fvec *ray_dir, int side)
+{
+	if (side == 0 && ray_dir->x < 0)
+		return(&g->no_img);
+	if (side == 0 && ray_dir->x > 0)
+		return(&g->so_img);
+	if (side == 1 && ray_dir->y > 0)
+		return(&g->ea_img);
+	if (side == 1 && ray_dir->y < 0)
+		return(&g->we_img);
+}
+
+
 void	write_vertical_line(t_god *g, int x)
 {
 	t_ivec	mapi;
@@ -668,27 +693,9 @@ void	write_vertical_line(t_god *g, int x)
 	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
 	find_w_n_s(g, &ray_dir, &mapi, &side, mx);
 	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
-	if (side == 0)
-	{
-		tx = g->ppos.y + perpdist * ray_dir.y;
-		texture_img = &g->no_img;
-	}
-	else
-	{
-		tx = g->ppos.x + perpdist * ray_dir.x;
-		texture_img = &g->ea_img;
-	}
-	tx -= floor(tx);
-	if (side == 0 && ray_dir.x > 0)
-		{
-		tx = 1 - tx;
-		texture_img = &g->so_img;
-	}
-	if (side == 1 && ray_dir.y < 0)
-	{
-		tx = 1 - tx;
-		texture_img = &g->we_img;
-	}
+	tx = f_tx(g, perpdist, &ray_dir, side);
+	texture_img = f_texture_im(g, &ray_dir, side);
+	
 	verline(x, perpdist, g, tx, texture_img);
 	verline2(x, g, mx);
 	free(mx);
