@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:38:18 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:53:33 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	read_nmb(char **str, int *int_p, int max, int max_error)
 	skip_spacis(str);
 }
 
-void	read_r(t_god *g, char *str, int line_count)
+void	read_r(t_god *g, char *str)
 {
 	if (g->wnd.i || g->wnd.j)
 	{
@@ -237,7 +237,7 @@ int		set_err_msg(t_god *g, char *msg)
 	return (0);
 }
 
-void	read_color(t_god *g, char *str, int line_count)
+void	read_color(t_god *g, char *str)
 {
 	int *target_p;
 	int red;
@@ -281,7 +281,7 @@ t_img	*set_target(t_god *g, char *str, int *start_pos)
 	return (NULL);
 }
 
-void	read_img(t_god *g, char *str, int line_count)
+void	read_img(t_god *g, char *str)
 {
 	char	*f_name;
 	t_img	*img;
@@ -300,15 +300,15 @@ void	read_img(t_god *g, char *str, int line_count)
 	if (!img->p)
 		set_err_msg(g, "a texture file is not able to load.\n");
 	else
-		img->addr = (int *)mlx_get_data_addr(img->p, 
+		img->addr = (int *)mlx_get_data_addr(img->p,
 			&img->bpp, &img->llen, &img->endian);
 	free(f_name);
 }
 
 void	make_mapdata(t_god *g)
 {
-	int i;
-	t_list *list_p;
+	int		i;
+	t_list	*list_p;
 
 	list_p = g->map_list;
 	g->map = malloc(sizeof(char *) * (g->map_h + 1));
@@ -325,7 +325,28 @@ void	make_mapdata(t_god *g)
 	}
 }
 
-void	interpret_line(t_god *g, char *line, int line_count)
+void	eval_conf(t_god *g, char *line, char *cfg_str, char *no_map_str)
+{
+	if (ft_strlen(cfg_str) && !ft_memcmp(cfg_str, "R ", 2))
+		read_r(g, cfg_str);
+	else if (ft_strlen(cfg_str) && 
+	!ft_memcmp(cfg_str, "C ", 2) || !ft_memcmp(cfg_str, "F ", 2))
+		read_color(g, cfg_str);
+	else if (ft_strlen(cfg_str) && !ft_memcmp(cfg_str, "SO ", 3) ||
+							!ft_memcmp(cfg_str, "NO ", 3) ||
+							!ft_memcmp(cfg_str, "WE ", 3) ||
+							!ft_memcmp(cfg_str, "EA ", 3) ||
+							!ft_memcmp(cfg_str, "S ", 2))
+		read_img(g, cfg_str);
+	else if (ft_strlen(cfg_str) && !ft_strlen(no_map_str))
+	{
+		ft_lstadd_back(&g->map_list, ft_lstnew(ft_strdup(line)));
+		g->map_h += 1;
+		g->map_w = ft_strlen(line);
+	}
+}
+
+void	interpret_line(t_god *g, char *line)
 {
 	char *temp_str;
 	char *non_map_parts_tmp;
@@ -336,6 +357,9 @@ void	interpret_line(t_god *g, char *line, int line_count)
 	
 	if (!g->map && !g->map_list)
 	{
+		eval_conf(g, line, temp_str, non_map_parts_tmp);
+		/*
+
 		if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "R ", 2))
 			read_r(g, temp_str, line_count);
 		else if (ft_strlen(temp_str) && !ft_memcmp(temp_str, "C ", 2) || !ft_memcmp(temp_str, "F ", 2))
@@ -352,6 +376,7 @@ void	interpret_line(t_god *g, char *line, int line_count)
 			g->map_h += 1;
 			g->map_w = ft_strlen(line);
 		}
+		*/
 	}
 	else if (!g->map)
 	{
@@ -417,7 +442,6 @@ int		load_settings(t_god *g, int argc, char **argv)
 	int cub_f_len;
 	int fd;
 	char *line;
-	int line_count;
 
 	if (argc < 2 || 3 < argc)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
@@ -428,16 +452,15 @@ int		load_settings(t_god *g, int argc, char **argv)
 	g->cub_fname = ft_strdup(argv[1]);
 	if (0 > (fd = open(argv[1], O_RDONLY)))
 		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
-	line_count = 0;
 	while (0 < get_next_line(fd, &line))
 	{
-		interpret_line(g, line, ++line_count);
+		interpret_line(g, line);
 		free(line);
 	}
-	interpret_line(g, line, ++line_count);
+	interpret_line(g, line);
 	free(line);
 	line = ft_strdup("");
-	interpret_line(g, line, line_count);
+	interpret_line(g, line);
 	free(line);
 	if (argc == 3)
 		g->bmp = 1;
