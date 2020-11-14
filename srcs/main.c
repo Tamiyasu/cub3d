@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 21:28:02 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 21:31:16 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,7 +493,7 @@ void	paint_bg(t_god *g)
 	}
 }
 
-unsigned int pic_color(t_img *img, int i, int j)
+unsigned int	pic_color(t_img *img, int i, int j)
 {
 	if (0 <= i && i < img->x_size && 0 <= j && j <= img->y_size)
 		return (*((unsigned int *)(img->addr + j * img->llen) + i));
@@ -530,11 +530,11 @@ double	f_invdet(t_god *g)
 t_fvec	f_transform(t_god *g, int i, int j)
 {
 	t_fvec	ret_fvec;
-	t_fvec	sprite_pos;
+	t_fvec	spos;
 
-	set_fvec(&sprite_pos, i + 0.5 - g->ppos.x, j + 0.5 - g->ppos.y);
-	ret_fvec.x = f_invdet(g) * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
-	ret_fvec.y = f_invdet(g) * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
+	set_fvec(&spos, i + 0.5 - g->ppos.x, j + 0.5 - g->ppos.y);
+	ret_fvec.x = f_invdet(g) * (g->pdir.y * spos.x - g->pdir.x * spos.y);
+	ret_fvec.y = f_invdet(g) * (-g->pvew.y * spos.x + g->pvew.x * spos.y);
 	return (ret_fvec);
 }
 
