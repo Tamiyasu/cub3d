@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 21:31:16 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 22:32:01 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -538,13 +538,10 @@ t_fvec	f_transform(t_god *g, int i, int j)
 	return (ret_fvec);
 }
 
-void	sprt_verline(t_god *g, int x, int *mx)
+void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 {
-	int				i;
 	t_fvec			transform;
 	unsigned int	color;
-	unsigned int	zero_color;
-	int				ymask[g->wnd.j];
 	int				spr_scr_x;
 	int				sprite_height;
 	t_ivec			de;
@@ -554,11 +551,50 @@ void	sprt_verline(t_god *g, int x, int *mx)
 	int				y;
 	int				d;
 
+	transform = f_transform(g, s_cell->i, s_cell->j);
+	spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
+	sprite_height = ABS((int)(g->wnd.j / (transform.y)));
+	de.i = MAX(0, -sprite_height / 2 + g->wnd.j / 2);
+	de.j = MIN(sprite_height / 2 + g->wnd.j / 2, g->wnd.j - 1);
+	spr_w = ABS((int)(g->wnd.j/ (transform.y)));
+	set_ivec(&swe, -spr_w / 2 + spr_scr_x, spr_w / 2 + spr_scr_x);
+	if (swe.i <= x && x < swe.j)
+	{
+		tex.i = (int)(((double)x - (-spr_w / 2 + spr_scr_x)) * g->s_img.x_size / spr_w);
+		if (transform.y > 0)
+		{
+			
+			y = de.i;
+			while (y <= de.j)
+			{
+				d = (double)y - g->wnd.j / 2 + sprite_height / 2;
+				tex.j = (int)((d * g->s_img.y_size) / sprite_height);
+				color = pic_color(&g->s_img, tex.i, tex.j);
+				if (color != g->i_zero_color && ymask[y] == 0)
+				{
+					ymask[y] = 1;
+					my_mlx_pixel_put(g, x, y, color);
+				}
+				y++;
+			}
+		}
+	}
+}
+
+void	sprt_verline(t_god *g, int x, int *mx)
+{
+	int				i;
+	t_ivec			s_cell;
+	int				ymask[g->wnd.j];
+
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
-	zero_color = pic_color(&g->s_img, 0, 0);
+	g->i_zero_color = pic_color(&g->s_img, 0, 0);
 	i = 0;
 	while (mx[2 * i])
 	{
+		set_ivec(&s_cell, mx[2 * i], mx[2 * i + 1]);
+		write_a_sprt(g, x, ymask, &s_cell);
+		/*
 		transform = f_transform(g, mx[2 * i], mx[2 * i + 1]);
 		spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
 		sprite_height = ABS((int)(g->wnd.j / (transform.y)));
@@ -571,13 +607,14 @@ void	sprt_verline(t_god *g, int x, int *mx)
 			tex.i = (int)(((double)x - (-spr_w / 2 + spr_scr_x)) * g->s_img.x_size / spr_w);
 			if (transform.y > 0)
 			{
+				
 				y = de.i;
 				while (y <= de.j)
 				{
 					d = (double)y - g->wnd.j / 2 + sprite_height / 2;
 					tex.j = (int)((d * g->s_img.y_size) / sprite_height);
 					color = pic_color(&g->s_img, tex.i, tex.j);
-					if (color != zero_color && ymask[y] == 0)
+					if (color != g->i_zero_color && ymask[y] == 0)
 					{
 						ymask[y] = 1;
 						my_mlx_pixel_put(g, x, y, color);
@@ -586,6 +623,7 @@ void	sprt_verline(t_god *g, int x, int *mx)
 				}
 			}
 		}
+		*/
 		i++;
 	}
 }
