@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:15:21 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:34:39 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -608,6 +608,14 @@ t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 	return (ret_fvec);
 }
 
+void set_mapi(t_ivec *mapi, t_fvec *sidedist, t_ivec *step)
+{
+	if (sidedist->x < sidedist->y)
+		mapi->i += step->i;
+	else 
+		mapi->j += step->j;
+}
+
 int		find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 {
 	int		mxi;
@@ -620,18 +628,9 @@ int		find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 	mxi = 0;
 	while (g->map[mapi->i][mapi->j] != '1')
 	{
-		if (sidedist.x < sidedist.y)
-		{
-			sidedist.x += ABS(1 / ray_dir->x);
-			mapi->i += step.i;
-			side = 0;
-		}
-		else
-		{
-			sidedist.y += ABS(1 / ray_dir->y);
-			mapi->j += step.j;
-			side = 1;
-		}
+		side = sidedist.x < sidedist.y ? 0 : 1;
+		set_mapi(mapi, &sidedist, &step);
+		sidedist = f_sidedist(g, mapi, ray_dir);
 		if (g->map[mapi->i][mapi->j] == '2')
 		{
 			mx[mxi * 2] = mapi->i;
