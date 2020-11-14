@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:56:10 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:59:07 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,7 +329,7 @@ void	eval_conf(t_god *g, char *line, char *cfg_str, char *no_map_str)
 {
 	if (ft_strlen(cfg_str) && !ft_memcmp(cfg_str, "R ", 2))
 		read_r(g, cfg_str);
-	else if (ft_strlen(cfg_str) && 
+	else if (ft_strlen(cfg_str) &&
 	!ft_memcmp(cfg_str, "C ", 2) || !ft_memcmp(cfg_str, "F ", 2))
 		read_color(g, cfg_str);
 	else if (ft_strlen(cfg_str) && !ft_memcmp(cfg_str, "SO ", 3) ||
@@ -369,27 +369,22 @@ void	eval_map(t_god *g, char *line, char *cfg_str, char *no_map_str)
 
 void	interpret_line(t_god *g, char *line)
 {
-	char *temp_str;
-	char *non_map_parts_tmp;
-	t_list *map_parts;
+	char	*temp_str;
+	char	*non_map_parts_tmp;
+	t_list	*map_parts;
 
 	temp_str = ft_strtrim(line, " \t\n\v\f\r");
 	non_map_parts_tmp = ft_strtrim(line, " 012NSWE");
-	
 	if (!g->map && !g->map_list)
 		eval_conf(g, line, temp_str, non_map_parts_tmp);
 	else if (!g->map)
 		eval_map(g, line, temp_str, non_map_parts_tmp);
 	else if (ft_strlen(temp_str))
-			set_err_msg(g, "It is fobbited that put any describing after map\n");
+			set_err_msg(g, "Don't put any describing after map\n");
 	free(temp_str);
 	free(non_map_parts_tmp);
 }
 
-/*
-** If do free(g->mlx), the malloced memory will be unrecable in kept in mxl_init,
-** so this program is not those mlx pointers.
-*/
 void	destroy_god(t_god *g)
 {
 	if (g->s_img.p)
@@ -421,9 +416,9 @@ void	destroy_god(t_god *g)
 
 int		load_settings(t_god *g, int argc, char **argv)
 {
-	int cub_f_len;
-	int fd;
-	char *line;
+	int		cub_f_len;
+	int		fd;
+	char	*line;
 
 	if (argc < 2 || 3 < argc)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
