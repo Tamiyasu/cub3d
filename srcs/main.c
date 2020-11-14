@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:03:52 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:16:04 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,12 +417,13 @@ int		load_settings(t_god *g, int argc, char **argv)
 
 	if (argc < 2 || 3 < argc)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
-	if ((cub_f_len = ft_strlen(argv[1])) <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
+	cub_f_len = ft_strlen(argv[1]);
+	if (cub_f_len <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
 		return (set_err_msg(g, "please set '.cub' file.\n"));
 	if (argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
 		return (set_err_msg(g, "plsese use \"--save\" in 2nd args\n"));
 	g->cub_fname = ft_strdup(argv[1]);
-	if (0 > (fd = open(argv[1], O_RDONLY)))
+	if (!g->cub_fname || 0 > (fd = open(g->cub_fname, O_RDONLY)))
 		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
 	while (0 < get_next_line(fd, &line))
 		interpret_line(g, line);
@@ -431,8 +432,9 @@ int		load_settings(t_god *g, int argc, char **argv)
 	interpret_line(g, line);
 	if (argc == 3)
 		g->bmp = 1;
-	g->title = ft_strdup(argv[1]);
 	mlx_do_key_autorepeatoff(g->mlx);
+	if (!(g->title = ft_strdup(argv[1])))
+		return (set_err_msg(g, "couldn't set the title.\n"));
 	g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
 	g->w_img.addr = mlx_get_data_addr(
 			g->w_img.p, &g->w_img.bpp, &g->w_img.llen, &g->w_img.endian);
