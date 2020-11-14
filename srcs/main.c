@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:53:05 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:03:57 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,10 @@ void	skip_spacis(char **str)
 	while (ft_isspace(**str))
 		(*str)++;
 }
-
 /*
-**read digits string and set the number in *int_p                  
-**set the max       in *int_p if max_error is     0                
-**set the max_error in *int_p if max_error is NOT 0                
+**read digits string and set the number in *int_p
+**set the max       in *int_p if max_error is     0
+**set the max_error in *int_p if max_error is NOT 0
 **the *str pointer proceeds first char that is not digit and spacis
 */
 void	read_nmb(char **str, int *int_p, int max, int max_error)
@@ -262,26 +261,32 @@ void	read_color(t_god *g, char *str, int line_count)
 	*target_p = (red << 16 | green << 8 | blue);
 }
 
-void	read_img(t_god *g, char *str, int line_count)
+t_img	*set_target(t_god *g, char *str, int *start_pos)
 {
-	char *f_name;
-	t_img *target;
-	int start_pos;
-
-	start_pos = 2;	
+	*start_pos = 2;
 	if (!ft_memcmp(str, "S ", 2))
 	{
-		target = &g->s_img;
-		start_pos = 1;	
+		*start_pos = 1;
+		return (&g->s_img);
 	}
-	else if (!ft_memcmp(str, "SO ", 3))
-		target = &g->so_img;
-	else if (!ft_memcmp(str, "WE ", 3))
-		target = &g->we_img;
-	else if (!ft_memcmp(str, "NO ", 3))
-		target = &g->no_img;
-	else if (!ft_memcmp(str, "EA ", 3))
-		target = &g->ea_img;
+	if (!ft_memcmp(str, "SO ", 3))
+		return (&g->so_img);
+	if (!ft_memcmp(str, "WE ", 3))
+		return (&g->we_img);
+	if (!ft_memcmp(str, "NO ", 3))
+		return (&g->no_img);
+	if (!ft_memcmp(str, "EA ", 3))
+		return (&g->ea_img);
+	return (NULL);
+}
+
+void	read_img(t_god *g, char *str, int line_count)
+{
+	char	*f_name;
+	t_img	*target;
+	int		start_pos;
+
+	target = set_target(g, str, &start_pos);
 
 	str += start_pos;
 	f_name = ft_strtrim(str, " \t\n\v\f\r");
