@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:02:18 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 17:03:52 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,6 @@ void	skip_spacis(char **str)
 }
 
 void	read_nmb(char **str, int *int_p, int max, int max_error)
-/*
-**read digits string and set the number in *int_p
-**set the max       in *int_p if max_error is     0
-**set the max_error in *int_p if max_error is NOT 0
-**the *str pointer proceeds first char that is not digit and spacis
-*/
 {
 	skip_spacis(str);
 	if (ft_isdigit(**str))
