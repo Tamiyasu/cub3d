@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:07:53 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 18:12:14 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -677,21 +677,17 @@ t_img	*f_texture_im(t_god *g, t_fvec *ray_dir, int side)
 void	write_vertical_line(t_god *g, int x)
 {
 	t_ivec	mapi;
-	t_ivec	step;
 	t_fvec	ray_dir;
 	int		*mx;
 	int		side;
-	double	perpdist;
 	double	tx;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 	ray_dir = f_ray_dir(g, x);
 	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
-	set_ivec(&step, ray_dir.x < 0 ? -1 : 1, ray_dir.y < 0 ? -1 : 1);
 	find_w_n_s(g, &ray_dir, &mapi, &side, mx);
-	perpdist = f_perpdist(g, &mapi, &ray_dir, side);
-	verline(x, perpdist, g, 
-		f_tx(g, perpdist, &ray_dir, side), 
+	verline(x, f_perpdist(g, &mapi, &ray_dir, side), g,
+		f_tx(g, f_perpdist(g, &mapi, &ray_dir, side), &ray_dir, side),
 		f_texture_im(g, &ray_dir, side));
 	verline2(x, g, mx);
 	free(mx);
