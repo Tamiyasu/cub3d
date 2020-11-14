@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 18:34:39 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 19:22:58 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,21 +493,21 @@ void	paint_bg(t_god *g)
 	}
 }
 
-void	verline(int x, double perpdist, t_god *g, double tx, t_img *im)
+void	verline(t_god *g, int x)
 {
 	t_ivec			de;
 	t_ivec			tp;
 	int				y;
 	unsigned int	color;
 
-	de.i = -(int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
-	de.j = (int)(g->wnd.j / perpdist) / 2 + g->wnd.j / 2;
-	tp.i = (int)(tx * (double)(im->x_size));
+	de.i = -(int)(g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2;
+	de.j = (int)(g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2;
+	tp.i = (int)(g->i_tx * (double)(g->i_img->x_size));
 	y = de.i;
 	while (y <= de.j)
 	{
-		tp.j = (int)((double)(y - de.i) / (de.j - de.i) * im->y_size);
-		color = *((unsigned int *)(im->addr + tp.j * im->llen) + tp.i);
+		tp.j = (int)((double)(y - de.i) / (de.j - de.i) * g->i_img->y_size);
+		color = *((unsigned int *)(g->i_img->addr + tp.j * g->i_img->llen) + tp.i);
 		if (0 <= y && y < g->wnd.j)
 			my_mlx_pixel_put(g, x, y, color);
 		y++;
@@ -608,11 +608,11 @@ t_fvec	f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir)
 	return (ret_fvec);
 }
 
-void set_mapi(t_ivec *mapi, t_fvec *sidedist, t_ivec *step)
+void	set_mapi(t_ivec *mapi, t_fvec *sidedist, t_ivec *step)
 {
 	if (sidedist->x < sidedist->y)
 		mapi->i += step->i;
-	else 
+	else
 		mapi->j += step->j;
 }
 
@@ -663,33 +663,30 @@ double	f_tx(t_god *g, double perpdist, t_fvec *ray_dir, int side)
 	return (ret_f);
 }
 
-t_img	*f_texture_im(t_god *g, t_fvec *ray_dir, int side)
+t_img	*f_texture_im(t_god *g)
 {
-	if (side == 0 && ray_dir->x < 0)
+	if (g->i_side == 0 && g->i_ray_dir.x < 0)
 		return (&g->no_img);
-	if (side == 0 && ray_dir->x > 0)
+	if (g->i_side == 0 && g->i_ray_dir.x > 0)
 		return (&g->so_img);
-	if (side == 1 && ray_dir->y > 0)
+	if (g->i_side == 1 && g->i_ray_dir.y > 0)
 		return (&g->ea_img);
-	if (side == 1 && ray_dir->y < 0)
+	if (g->i_side == 1 && g->i_ray_dir.y < 0)
 		return (&g->we_img);
 }
 
 void	write_vertical_line(t_god *g, int x)
 {
-	t_ivec	mapi;
-	t_fvec	ray_dir;
 	int		*mx;
-	int		side;
-	double	tx;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
-	ray_dir = f_ray_dir(g, x);
-	set_ivec(&mapi, (int)(g->ppos.x), (int)(g->ppos.y));
-	side = find_w_n_s(g, &ray_dir, &mapi, mx);
-	verline(x, f_perpdist(g, &mapi, &ray_dir, side), g,
-		f_tx(g, f_perpdist(g, &mapi, &ray_dir, side), &ray_dir, side),
-		f_texture_im(g, &ray_dir, side));
+	g->i_ray_dir = f_ray_dir(g, x);
+	set_ivec(&g->i_mapi, (int)(g->ppos.x), (int)(g->ppos.y));
+	g->i_side = find_w_n_s(g, &g->i_ray_dir, &g->i_mapi, mx);
+	g->i_perpdist = f_perpdist(g, &g->i_mapi, &g->i_ray_dir, g->i_side);
+	g->i_tx = f_tx(g, g->i_perpdist, &g->i_ray_dir, g->i_side);
+	g->i_img = f_texture_im(g);
+	verline(g, x);
 	verline2(x, g, mx);
 	free(mx);
 }

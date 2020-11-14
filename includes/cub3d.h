@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 17:22:48 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 19:19:30 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ typedef struct	s_god
 	double 		rotSpeed;
 	double		moveSpeed_ga;
 	double		moveSpeed_sw;
+	t_fvec		i_ray_dir;
+	t_ivec		i_mapi;
+	int			i_side;
+	double		i_perpdist;
+	double		i_tx;
+	t_img		*i_img;
 }				t_god;	
 
 void	make_image(t_god *g);
