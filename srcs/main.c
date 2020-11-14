@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 10:54:10 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:30:54 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -520,27 +520,29 @@ void paint_bg(t_god *g)
 	}
 }
 
-void verLine(int x, int drowstart, int drowend, t_god *g, double tx, t_img *im)
+void verline(int x, double perpWallDist, t_god *g, double tx, t_img *im)
 {
-	int y;
-	y = drowstart;
+	t_ivec		de;
+	t_ivec 		tp;
+	int			y;
 	unsigned int color;
-	int txp;
-	int typ;
 
-	txp = (int)(tx * (double)(im->x_size));
+	de.i = -(int)(g->wnd.j / perpWallDist) / 2 + g->wnd.j / 2;
+	de.j = (int)(g->wnd.j / perpWallDist) / 2 + g->wnd.j / 2;
+	tp.i = (int)(tx * (double)(im->x_size));
 
-	while (y <= drowend)
+	y = de.i;
+	while (y <= de.j)
 	{
-		typ = (int)((double)(y - drowstart) / (double)(drowend - drowstart) * (double)(im->y_size));
-		color = *((unsigned int *)(im->addr + typ * im->llen) + txp);
+		tp.j = (int)((double)(y - de.i) / (de.j - de.i) * im->y_size);
+		color = *((unsigned int *)(im->addr + tp.j * im->llen) + tp.i);
 		if (0 <= y && y < g->wnd.j)
 			my_mlx_pixel_put(g, x, y, color);
 		y++;
 	}
 }
 
-void verLine2(int x, t_god *g, int *mx)
+void verline2(int x, t_god *g, int *mx)
 {
 	int i;
 	double spriteX;
@@ -605,9 +607,15 @@ void verLine2(int x, t_god *g, int *mx)
 void make_image(t_god *g)
 {
 	int x;
-	int mapX;
-	int mapY;
+	t_ivec mapindex;
 	int *mx;
+	t_fvec ray_dir;
+	int hit;
+	t_fvec sidedist;
+	t_fvec deltadist;
+	double perpWallDist;
+	t_ivec step;
+	int side;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 
@@ -615,110 +623,96 @@ void make_image(t_god *g)
 	while (x < g->wnd.i)
 	{
 		ft_bzero(mx, MAX(g->map_h, g->map_w) * 4 * sizeof(int));
-		double cameraX = 2 * x / (double)(g->wnd.i) - 1;
-		double rayDirX = g->pdx + g->planex * cameraX;
-		double rayDirY = g->pdy + g->planey * cameraX;
-		mapX = (int)(g->ppos.x);
-		mapY = (int)(g->ppos.y);
+		ray_dir.x = g->pdx + g->planex * (2 * x / (double)(g->wnd.i) - 1);
+		ray_dir.y = g->pdy + g->planey * (2 * x / (double)(g->wnd.i) - 1);
+		mapindex.i = (int)(g->ppos.x);
+		mapindex.j = (int)(g->ppos.y);
+		deltadist.x = ABS(1 / ray_dir.x);
+		deltadist.y = ABS(1 / ray_dir.y);
 
-		double sideDistX;
-		double sideDistY;
-		double deltaDistX = ABS(1 / rayDirX);
-		double deltaDistY = ABS(1 / rayDirY);
-		double perpWallDist;
-		int stepX;
-		int stepY;
-
-		int hit = 0;
-		int side;
-		if (rayDirX < 0)
+		if (ray_dir.x < 0)
 		{
-			stepX = -1;
-			sideDistX = (g->ppos.x - mapX) * deltaDistX;
+			step.i = -1;
+			sidedist.x = (g->ppos.x - mapindex.i) * deltadist.x;
 		}
 		else
 		{
-			stepX = 1;
-			sideDistX = (mapX + 1.0 - g->ppos.x) * deltaDistX;
+			step.i = 1;
+			sidedist.x = (mapindex.i + 1.0 - g->ppos.x) * deltadist.x;
 		}
-		if (rayDirY < 0)
+		if (ray_dir.y < 0)
 		{
-			stepY = -1;
-			sideDistY = (g->ppos.y - mapY) * deltaDistY;
+			step.j = -1;
+			sidedist.y = (g->ppos.y - mapindex.j) * deltadist.y;
 		}
 		else
 		{
-			stepY = 1;
-			sideDistY = (mapY + 1.0 - g->ppos.y) * deltaDistY;
+			step.j = 1;
+			sidedist.y = (mapindex.j + 1.0 - g->ppos.y) * deltadist.y;
 		}
 		int mxi = 0;
+		hit = 0;
 		while (hit == 0)
 		{
-			if (sideDistX < sideDistY)
+			if (sidedist.x < sidedist.y)
 			{
-				sideDistX += deltaDistX;
-				mapX += stepX;
+				sidedist.x += deltadist.x;
+				mapindex.i += step.i;
 				side = 0;
 			}
 			else
 			{
-				sideDistY += deltaDistY;
-				mapY += stepY;
+				sidedist.y += deltadist.y;
+				mapindex.j += step.j;
 				side = 1;
 			}
-			if (g->map[mapX][mapY] == '1')
+			if (g->map[mapindex.i][mapindex.j] == '1')
 				hit = 1;
-			else if (g->map[mapX][mapY] == '2')
+			else if (g->map[mapindex.i][mapindex.j] == '2')
 			{
-				mx[mxi * 2] = mapX;
-				mx[mxi * 2 + 1] = mapY;
+				mx[mxi * 2] = mapindex.i;
+				mx[mxi * 2 + 1] = mapindex.j;
 				mxi++;
 			}	
 		}
 		if (side == 0)
-			perpWallDist = (mapX - g->ppos.x + (1 - stepX) / 2) / rayDirX;
+			perpWallDist = (mapindex.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
 		else
-			perpWallDist = (mapY - g->ppos.y + (1 - stepY) / 2) / rayDirY;
-		int lineHeight = (int)(g->wnd.j / perpWallDist);
-
-		int drawStart;
-		drawStart = -lineHeight / 2 + g->wnd.j / 2;
-		int drawEnd;
-		drawEnd = lineHeight / 2 + g->wnd.j / 2;
+			perpWallDist = (mapindex.j - g->ppos.y + (1 - step.j) / 2) / ray_dir.y;
 
 		t_img *texture_img;
 		double tx;
 		if (side == 0)
 		{
-			tx = g->ppos.y + perpWallDist * rayDirY;
+			tx = g->ppos.y + perpWallDist * ray_dir.y;
 			texture_img = &g->no_img;
 		}
 		else
 		{
-			tx = g->ppos.x + perpWallDist * rayDirX;
+			tx = g->ppos.x + perpWallDist * ray_dir.x;
 			texture_img = &g->ea_img;
 		}
 		tx -= floor(tx);
-		if (side == 0 && rayDirX > 0)
+		if (side == 0 && ray_dir.x > 0)
 		{
 			tx = 1 - tx;
 			texture_img = &g->so_img;
 		}
-		if (side == 1 && rayDirY < 0)
+		if (side == 1 && ray_dir.y < 0)
 		{
 			tx = 1 - tx;
 			texture_img = &g->we_img;
 		}
 		//draw the pixels of the stripe as a vertical line
-		verLine(x, drawStart, drawEnd, g, tx, texture_img);
-		verLine2(x, g, mx);
+		verline(x, perpWallDist, g, tx, texture_img);
+		verline2(x, g, mx);
 		x++;
 	}
 
 	free(mx);
 }
 
-int hook_keypress_func(int key_code, t_god *g)
+int		hook_keypress_func(int key_code, t_god *g)
 {
 	if (key_code == KEY_CODE_W)
 		g->moveSpeed_ga += MOVESPEED;
@@ -741,7 +735,7 @@ int hook_keypress_func(int key_code, t_god *g)
 	return (0);
 }
 
-int hook_keyrelease_func(int key_code, t_god *g)
+int		hook_keyrelease_func(int key_code, t_god *g)
 {
 	g->plv += 1.0;
 	if (key_code == KEY_CODE_W)
@@ -787,7 +781,8 @@ int	main(int argc, char **argv)
 		g.title = ft_strdup(argv[1]);
 		mlx_do_key_autorepeatoff(g.mlx);
 		g.w_img.p = mlx_new_image(g.mlx, g.wnd.i, g.wnd.j);
-		g.w_img.addr = mlx_get_data_addr(g.w_img.p, &g.w_img.bpp, &g.w_img.llen, &g.w_img.endian);
+		g.w_img.addr = mlx_get_data_addr(
+			g.w_img.p, &g.w_img.bpp, &g.w_img.llen, &g.w_img.endian);
 		if (!g.bmp)
 		{
 			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.title);
@@ -805,7 +800,7 @@ int	main(int argc, char **argv)
 void	littleendian(unsigned char *s, unsigned int n, int size)
 {
 	int i;
-	
+
 	i = 0;
 	s[i++] = (unsigned char)(n);
 	while (i < size)
@@ -841,8 +836,9 @@ int		write_pixels(int fd, t_god *g)
 	{
 		it.j = -1;
 		while (++it.j < g->wnd.i)
-			littleendian(line + (it.j * BMP_BPP), 
-			*((unsigned int *)(g->w_img.addr + it.i * g->w_img.llen) + it.j), 4);
+			littleendian(line + (it.j * BMP_BPP),
+			*((unsigned int *)(g->w_img.addr +
+			it.i * g->w_img.llen) + it.j), 4);
 		write(fd, line, g->wnd.i * BMP_BPP);
 	}
 	free(line);
