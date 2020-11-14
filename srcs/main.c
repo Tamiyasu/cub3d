@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 01:30:23 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 01:57:06 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -408,6 +408,25 @@ void	destroy_god(t_god *g)
 	ft_bzero(g, sizeof(t_god));
 }
 
+int		check_settings(t_god *g)
+{
+	if (g->ce_rgb < 0 || g->fl_rgb)
+		set_err_msg(g, "please set color for ceiling / floor\n");
+	if (!g->wnd.i || !g->wnd.j)
+		set_err_msg(g, "please set screen size.\n");
+	if (!g->ea_img.p) 
+		set_err_msg(g, "please set east wall texture.\n");
+	if (!g->we_img.p) 
+		set_err_msg(g, "please set west  wall texture.\n");
+	if (!g->so_img.p) 
+		set_err_msg(g, "please set south wall texture.\n");
+	if (!g->no_img.p) 
+		set_err_msg(g, "please set north wall texture.\n");
+	if (!g->s_img.p) 
+		set_err_msg(g, "please set sprite wall texture.\n");
+	return (0);
+}
+
 int		load_settings(t_god *g, int argc, char **argv)
 {
 	int		cub_f_len;
@@ -434,6 +453,7 @@ int		load_settings(t_god *g, int argc, char **argv)
 	g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
 	g->w_img.addr = mlx_get_data_addr(
 			g->w_img.p, &g->w_img.bpp, &g->w_img.llen, &g->w_img.endian);
+	return (check_settings(g));
 }
 
 void	exit_func(t_god *g)
@@ -545,7 +565,8 @@ void	write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
 	unsigned int	color;
 	t_ivec			tex;
 
-	tex.i = (int)(((double)x - (-g->i_s_size / 2 + g->i_s_scr_x)) * g->s_img.x_size / g->i_s_size);
+	tex.i = (int)(((double)x - (-g->i_s_size / 2 + g->i_s_scr_x)) *
+		g->s_img.x_size / g->i_s_size);
 	y = de->i;
 	while (y <= de->j)
 	{
@@ -573,7 +594,8 @@ void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 	de.j = MIN(g->i_s_size / 2 + g->wnd.j / 2, g->wnd.j - 1);
 	if (transform.y <= 0)
 		return ;
-	if (x < -g->i_s_size / 2 + g->i_s_scr_x || g->i_s_size / 2 + g->i_s_scr_x <= x)
+	if (x < -g->i_s_size / 2 + g->i_s_scr_x ||
+		g->i_s_size / 2 + g->i_s_scr_x <= x)
 		return ;
 	write_a_sprt_loop(g, &de, x, ymask);
 }
