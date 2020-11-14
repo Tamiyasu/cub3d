@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 16:27:43 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 16:32:27 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -541,20 +541,20 @@ void	verline2(int x, t_god *g, int *mx)
 {
 	int i;
 	t_fvec sprite_pos;
-	double invDet;
+	double invdet;
 	t_fvec transform;
 	unsigned int color;
 	int ymask[g->wnd.j];
-	int spriteScreenX;
-	int spriteHeight;
-	int drawStartY;
-	int drawEndY;
-	int spriteWidth;
-	int drawStartX;
-	int drawEndX;
-	int texX;
+	int sprite_screen_x;
+	int sprite_height;
+	int draw_start_y;
+	int draw_end_y;
+	int sprite_width;
+	int draw_start_x;
+	int draw_end_x;
+	int texx;
 	int y;
-	int texY;
+	int texy;
 	int d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
@@ -563,35 +563,35 @@ void	verline2(int x, t_god *g, int *mx)
 	{
 		sprite_pos.x = (double)mx[2 * i] + 0.5 - g->ppos.x;
 		sprite_pos.y = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
-		invDet = 1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y);
-		transform.x = invDet * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
-		transform.y = invDet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
-		spriteScreenX = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
-		spriteHeight = ABS((int)(g->wnd.j/(transform.y)));
-		drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
-		if (drawStartY < 0)
-			drawStartY = 0;
-		drawEndY = spriteHeight / 2 + g->wnd.j / 2;
-		if (drawEndY >= g->wnd.j)
-			drawEndY = g->wnd.j - 1;
-		spriteWidth = ABS((int)(g->wnd.j/ (transform.y)));
-		drawStartX = -spriteWidth / 2 + spriteScreenX;
-		if (drawStartX < 0)
-			drawStartX = 0;
-		drawEndX = spriteWidth / 2 + spriteScreenX;
-		if (drawEndX >= g->wnd.i)
-			drawEndX = g->wnd.i - 1;
-		if (drawStartX <= x && x < drawEndX)
+		invdet = 1.0 / (g->pvew.x * g->pdir.y - g->pdir.x * g->pvew.y);
+		transform.x = invdet * (g->pdir.y * sprite_pos.x - g->pdir.x * sprite_pos.y);
+		transform.y = invdet * (-g->pvew.y * sprite_pos.x + g->pvew.x * sprite_pos.y);
+		sprite_screen_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
+		sprite_height = ABS((int)(g->wnd.j / (transform.y)));
+		draw_start_y = - sprite_height / 2 + g->wnd.j / 2;
+		if (draw_start_y < 0)
+			draw_start_y = 0;
+		draw_end_y = sprite_height / 2 + g->wnd.j / 2;
+		if (draw_end_y >= g->wnd.j)
+			draw_end_y = g->wnd.j - 1;
+		sprite_width = ABS((int)(g->wnd.j/ (transform.y)));
+		draw_start_x = -sprite_width / 2 + sprite_screen_x;
+		if (draw_start_x < 0)
+			draw_start_x = 0;
+		draw_end_x = sprite_width / 2 + sprite_screen_x;
+		if (draw_end_x >= g->wnd.i)
+			draw_end_x = g->wnd.i - 1;
+		if (draw_start_x <= x && x < draw_end_x)
 		{
-			texX = (int) (256 * (x - (-spriteWidth / 2 + spriteScreenX)) * g->s_img.x_size / spriteWidth) / 256;
+			texx = (int) (256 * (x - (-sprite_width / 2 + sprite_screen_x)) * g->s_img.x_size / sprite_width) / 256;
 			if (transform.y > 0 && x > 0 && x < g->wnd.i);
 			{
-				y = drawStartY;
-				while (y < drawEndY)
+				y = draw_start_y;
+				while (y < draw_end_y)
 				{
-					d = (y) * 256 - g->wnd.j * 128 + spriteHeight * 128;
-					texY = ((d * g->s_img.y_size) / spriteHeight) / 256;
-					color = *((unsigned int *)(g->s_img.addr + texY * g->s_img.llen) + texX);
+					d = (y) * 256 - g->wnd.j * 128 + sprite_height * 128;
+					texy = ((d * g->s_img.y_size) / sprite_height) / 256;
+					color = *((unsigned int *)(g->s_img.addr + texy * g->s_img.llen) + texx);
 					if ((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
 					{
 						ymask[y] = 1;
