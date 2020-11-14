@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 22:32:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 22:55:54 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -543,32 +543,27 @@ void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 	t_fvec			transform;
 	unsigned int	color;
 	int				spr_scr_x;
-	int				sprite_height;
 	t_ivec			de;
-	int				spr_w;
-	t_ivec			swe;
+	int				spr_size;
 	t_ivec			tex;
 	int				y;
 	int				d;
 
 	transform = f_transform(g, s_cell->i, s_cell->j);
 	spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
-	sprite_height = ABS((int)(g->wnd.j / (transform.y)));
-	de.i = MAX(0, -sprite_height / 2 + g->wnd.j / 2);
-	de.j = MIN(sprite_height / 2 + g->wnd.j / 2, g->wnd.j - 1);
-	spr_w = ABS((int)(g->wnd.j/ (transform.y)));
-	set_ivec(&swe, -spr_w / 2 + spr_scr_x, spr_w / 2 + spr_scr_x);
-	if (swe.i <= x && x < swe.j)
+	spr_size = ABS((int)(g->wnd.j / (transform.y)));
+	de.i = MAX(0, -spr_size / 2 + g->wnd.j / 2);
+	de.j = MIN(spr_size / 2 + g->wnd.j / 2, g->wnd.j - 1);
+	if (-spr_size / 2 + spr_scr_x <= x && x < spr_size / 2 + spr_scr_x)
 	{
-		tex.i = (int)(((double)x - (-spr_w / 2 + spr_scr_x)) * g->s_img.x_size / spr_w);
+		tex.i = (int)(((double)x - (-spr_size / 2 + spr_scr_x)) * g->s_img.x_size / spr_size);
 		if (transform.y > 0)
 		{
-			
 			y = de.i;
 			while (y <= de.j)
 			{
-				d = (double)y - g->wnd.j / 2 + sprite_height / 2;
-				tex.j = (int)((d * g->s_img.y_size) / sprite_height);
+				d = (double)y - g->wnd.j / 2 + spr_size / 2;
+				tex.j = (int)((d * g->s_img.y_size) / spr_size);
 				color = pic_color(&g->s_img, tex.i, tex.j);
 				if (color != g->i_zero_color && ymask[y] == 0)
 				{
@@ -594,36 +589,6 @@ void	sprt_verline(t_god *g, int x, int *mx)
 	{
 		set_ivec(&s_cell, mx[2 * i], mx[2 * i + 1]);
 		write_a_sprt(g, x, ymask, &s_cell);
-		/*
-		transform = f_transform(g, mx[2 * i], mx[2 * i + 1]);
-		spr_scr_x = (int)((g->wnd.i / 2) * (1 + transform.x / transform.y));
-		sprite_height = ABS((int)(g->wnd.j / (transform.y)));
-		de.i = MAX(0, -sprite_height / 2 + g->wnd.j / 2);
-		de.j = MIN(sprite_height / 2 + g->wnd.j / 2, g->wnd.j - 1);
-		spr_w = ABS((int)(g->wnd.j/ (transform.y)));
-		set_ivec(&swe, -spr_w / 2 + spr_scr_x, spr_w / 2 + spr_scr_x);
-		if (swe.i <= x && x < swe.j)
-		{
-			tex.i = (int)(((double)x - (-spr_w / 2 + spr_scr_x)) * g->s_img.x_size / spr_w);
-			if (transform.y > 0)
-			{
-				
-				y = de.i;
-				while (y <= de.j)
-				{
-					d = (double)y - g->wnd.j / 2 + sprite_height / 2;
-					tex.j = (int)((d * g->s_img.y_size) / sprite_height);
-					color = pic_color(&g->s_img, tex.i, tex.j);
-					if (color != g->i_zero_color && ymask[y] == 0)
-					{
-						ymask[y] = 1;
-						my_mlx_pixel_put(g, x, y, color);
-					}
-					y++;
-				}
-			}
-		}
-		*/
 		i++;
 	}
 }
