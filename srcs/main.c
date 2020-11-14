@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 21:17:15 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 21:28:02 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,6 +493,14 @@ void	paint_bg(t_god *g)
 	}
 }
 
+unsigned int pic_color(t_img *img, int i, int j)
+{
+	if (0 <= i && i < img->x_size && 0 <= j && j <= img->y_size)
+		return (*((unsigned int *)(img->addr + j * img->llen) + i));
+	else
+		return (0);
+}
+
 void	wall_verline(t_god *g, int x)
 {
 	t_ivec			de;
@@ -507,7 +515,7 @@ void	wall_verline(t_god *g, int x)
 	while (y <= de.j)
 	{
 		tp.j = (int)((double)(y - de.i) / (de.j - de.i) * g->i_img->y_size);
-		color = *((unsigned int *)(g->i_img->addr + tp.j * g->i_img->llen) + tp.i);
+		color = pic_color(g->i_img, tp.i, tp.j);
 		if (0 <= y && y < g->wnd.j)
 			my_mlx_pixel_put(g, x, y, color);
 		y++;
@@ -547,7 +555,7 @@ void	sprt_verline(t_god *g, int x, int *mx)
 	int				d;
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
-	zero_color = *((unsigned int *)(g->s_img.addr));
+	zero_color = pic_color(&g->s_img, 0, 0);
 	i = 0;
 	while (mx[2 * i])
 	{
@@ -568,14 +576,11 @@ void	sprt_verline(t_god *g, int x, int *mx)
 				{
 					d = (double)y - g->wnd.j / 2 + sprite_height / 2;
 					tex.j = (int)((d * g->s_img.y_size) / sprite_height);
-					if(0 <= tex.i && tex.i < g->s_img.x_size || 0 <= tex.j && tex.j < g->s_img.y_size)
+					color = pic_color(&g->s_img, tex.i, tex.j);
+					if (color != zero_color && ymask[y] == 0)
 					{
-						color = *((unsigned int *)(g->s_img.addr + tex.j * g->s_img.llen) + tex.i);
-						if (color != zero_color && ymask[y] == 0)
-						{
-							ymask[y] = 1;
-							my_mlx_pixel_put(g, x, y, color);
-						}
+						ymask[y] = 1;
+						my_mlx_pixel_put(g, x, y, color);
 					}
 					y++;
 				}
