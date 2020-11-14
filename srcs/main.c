@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:34:39 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:38:55 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -640,6 +640,7 @@ void	make_image(t_god *g)
 	double perpdist;
 	t_ivec step;
 	int side;
+	int mxi;
 
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 	x = 0;
@@ -672,7 +673,7 @@ void	make_image(t_god *g)
 			step.j = 1;
 			sidedist.y = (mapi.j + 1.0 - g->ppos.y) * deltadist.y;
 		}
-		int mxi = 0;
+		mxi = 0;
 		hit = 0;
 		while (hit == 0)
 		{
@@ -695,7 +696,7 @@ void	make_image(t_god *g)
 				mx[mxi * 2] = mapi.i;
 				mx[mxi * 2 + 1] = mapi.j;
 				mxi++;
-			}	
+			}
 		}
 		if (side == 0)
 			perpdist = (mapi.i - g->ppos.x + (1 - step.i) / 2) / ray_dir.x;
