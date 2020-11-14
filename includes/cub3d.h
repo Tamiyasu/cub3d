@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 07:46:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 10:49:32 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ typedef struct  s_dvec
 	double y;
 }				t_fvec;
 
-
 typedef struct	s_god
 {
 	char		*cub_fname;
@@ -80,8 +79,7 @@ typedef struct	s_god
 	void		*mlx;
     void		*win;
 	t_img		w_img;
-	int			wnd_x;
-	int			wnd_y;
+	t_ivec		wnd;
     int			scr_x;
     int			scr_y;
 	char		*title;
@@ -98,8 +96,9 @@ typedef struct	s_god
 	int			bmp;
 	char		*err_msg;		
 	t_list		*map_list;
-	double		pli;
-	double  	plj;
+	t_fvec		ppos;
+	t_fvec		pdir;
+	t_fvec		pvew;
 	double		pdx;
 	double  	pdy;
 	double		planex;
@@ -114,5 +113,7 @@ typedef struct	s_god
 void	make_image(t_god *g);
 void	paint_bg(t_god *g);
 int		set_err_msg(t_god *g, char *msg);
+void set_ivec(t_ivec *v, long i, long j);
 void print_game(t_god *g); //please remove before finish;
+
 #endif

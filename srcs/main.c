@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 09:03:44 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 10:51:54 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,20 +67,17 @@ void read_nmb(char **str, int *int_p, int max, int max_error)
 
 void read_r(t_god *g, char *str, int line_count)
 {
-	if (g->wnd_x || g->wnd_y)
+	if (g->wnd.i || g->wnd.j)
 	{
 		set_err_msg(g, "The cub file has double setting in window size.\n");
 		return;
 	}
 	str++;
-	read_nmb(&str, &g->wnd_x, g->scr_x, 0);
-	read_nmb(&str, &g->wnd_y, g->scr_y, 0);
+	read_nmb(&str, &g->wnd.i, g->scr_x, 0);
+	read_nmb(&str, &g->wnd.j, g->scr_y, 0);
 	if (*str)
-	{
-		g->wnd_y = 0;
-		g->wnd_x = 0;
-	}
-	if (!g->wnd_x || !g->wnd_y)
+		set_ivec(&g->wnd, 0, 0);
+	if (!g->wnd.i || !g->wnd.j)
 	{
 		set_err_msg(g, "The cub file has wrong setting in window size.\n");
 		return;
@@ -182,7 +179,7 @@ void set_start_pos(t_god *g, t_ivec *p_pos)
 
 	set_fvec(&player_pos, p_pos->j + 0.5, p_pos->i + 0.5);
 	set_fvec(&player_direction, -1, 0);
-	set_fvec(&player_view_plain, 0, (double)g->wnd_x / (double)g->wnd_y / 2.0);
+	set_fvec(&player_view_plain, 0, (double)g->wnd.i / (double)g->wnd.j / 2.0);
 	rot = 0;
 	if (g->map[p_pos->i][p_pos->j] == 'S')
 		rot = M_PI;
@@ -192,8 +189,8 @@ void set_start_pos(t_god *g, t_ivec *p_pos)
 		rot = M_PI_2;
 	rotation(&player_direction, rot);
 	rotation(&player_view_plain, rot);
-	g->pli = player_pos.y;
-	g->plj = player_pos.x;
+	g->ppos.x = player_pos.y;
+	g->ppos.y = player_pos.x;
 	g->pdx = player_direction.x;
 	g->pdy = player_direction.y;
 	g->planex = player_view_plain.x;
@@ -454,21 +451,19 @@ void exit_func(t_god *g)
 
 void  next_pl(t_god *g)
 {
-	double stepi;
-	double stepj;
+	t_fvec step;
 	double wdist;
 	
-	stepi = g->pdx * g->moveSpeed_ga + g->pdy * g->moveSpeed_sw;
-	stepj = g->pdy * g->moveSpeed_ga - g->pdx * g->moveSpeed_sw;
-
-	wdist = 0 < stepi ? WALLDIST : -WALLDIST;
-	if(g->map[(int)(g->pli + stepi + wdist)][(int)(g->plj)] == '1')
-		stepi = 0;
-	wdist = 0 < stepj ? WALLDIST : -WALLDIST;
-	if(g->map[(int)(g->pli)][(int)(g->plj + stepj + wdist)] == '1')
-		stepj = 0;
-	g->pli += stepi;
-	g->plj += stepj;
+	step.x = g->pdx * g->moveSpeed_ga + g->pdy * g->moveSpeed_sw;
+	step.y = g->pdy * g->moveSpeed_ga - g->pdx * g->moveSpeed_sw;
+	wdist = 0 < step.x ? WALLDIST : -WALLDIST;
+	if(g->map[(int)(g->ppos.x + step.x + wdist)][(int)(g->ppos.y)] == '1')
+		step.x = 0;
+	wdist = 0 < step.y ? WALLDIST : -WALLDIST;
+	if(g->map[(int)(g->ppos.x)][(int)(g->ppos.y + step.y + wdist)] == '1')
+		step.y = 0;
+	g->ppos.x += step.x;
+	g->ppos.y += step.y;
 }
 
 void next_plane(t_god *g)
@@ -512,22 +507,16 @@ int loop_func(t_god *g)
 
 void paint_bg(t_god *g)
 {
-	int wnd_x;
-	int wnd_y;
+	t_ivec wnd;
 
-	wnd_x = 0;
-	while (wnd_x < g->wnd_x)
+	wnd.i = -1;
+	while (++wnd.i < g->wnd.i)
 	{	
-		wnd_y = 0;
-		while (wnd_y < g->wnd_y)
-		{
-			if (wnd_y < g->wnd_y / 2)
-				my_mlx_pixel_put(g, wnd_x, wnd_y, g->ce_rgb);
-			else
-				my_mlx_pixel_put(g, wnd_x, wnd_y, g->fl_rgb);
-			wnd_y++;
-		}
-		wnd_x++;
+		wnd.j = -1;
+		while (++wnd.j < g->wnd.j / 2)
+			my_mlx_pixel_put(g, wnd.i, wnd.j, g->ce_rgb);
+		while (++wnd.j < g->wnd.j)
+			my_mlx_pixel_put(g, wnd.i, wnd.j, g->fl_rgb);
 	}
 }
 
@@ -545,7 +534,7 @@ void verLine(int x, int drowstart, int drowend, t_god *g, double tx, t_img *im)
 	{
 		typ = (int)((double)(y - drowstart) / (double)(drowend - drowstart) * (double)(im->y_size));
 		color = *((unsigned int *)(im->addr + typ * im->llen) + txp);
-		if (0 <= y && y < g->wnd_y)
+		if (0 <= y && y < g->wnd.j)
 			my_mlx_pixel_put(g, x, y, color);
 		y++;
 	}
@@ -560,75 +549,45 @@ void verLine2(int x, t_god *g, int *mx)
 	double transformX;
 	double transformY;
 	unsigned int color;
-	int ymask[g->wnd_y];
+	int ymask[g->wnd.j];
 
-	ft_bzero(ymask, sizeof(int) * g->wnd_y);
+	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 
 	i = 0;
 	while(mx[2 * i])
 	{
-//		printf("fmap[%d][%d] %f\n", mx[2 * i], mx[2 * i + 1], fmap[mx[2 * i]][mx[2 * i + 1]]);
-		spriteX = (double)mx[2 * i] + 0.5 - g->pli;
-		spriteY = (double)mx[2 * i + 1] + 0.5 - g->plj;
+		spriteX = (double)mx[2 * i] + 0.5 - g->ppos.x;
+		spriteY = (double)mx[2 * i + 1] + 0.5 - g->ppos.y;
 		
 		invDet = 1.0 / (g->planex * g->pdy - g->pdx * g->planey);
-		//double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
 
 		transformX = invDet * (g->pdy * spriteX - g->pdx * spriteY);
-		//double transformX = invDet * (dirY * spriteX - dirX * spriteY);
 		transformY = invDet * (-g->planey * spriteX + g->planex * spriteY);
-		//double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
 		
-		//calculate height of the sprite on screen
-		int spriteScreenX = (int)((g->wnd_x / 2) * (1 + transformX / transformY));
-		//int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
-		int spriteHeight = ABS((int)(g->wnd_y/(transformY)));
-		//int spriteHeight = abs(int(h / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
-		//calculate lowest and highest pixel to fill in current stripe
-		int drawStartY = - spriteHeight / 2 + g->wnd_y / 2;
-		//int drawStartY = -spriteHeight / 2 + h / 2;
+		int spriteScreenX = (int)((g->wnd.i / 2) * (1 + transformX / transformY));
+		int spriteHeight = ABS((int)(g->wnd.j/(transformY)));
+		int drawStartY = - spriteHeight / 2 + g->wnd.j / 2;
 		if(drawStartY < 0)
 			drawStartY = 0;
-		//if(drawStartY < 0) drawStartY = 0;
-		int drawEndY = spriteHeight / 2 + g->wnd_y / 2;
-		//int drawEndY = spriteHeight / 2 + h / 2;
-		if(drawEndY >= g->wnd_y)
-			drawEndY = g->wnd_y - 1;
-		//if(drawEndY >= h) drawEndY = h - 1;
-
-		//calculate width of the sprite
-		int spriteWidth = abs((int)(g->wnd_y/ (transformY)));
+		int drawEndY = spriteHeight / 2 + g->wnd.j / 2;
+		if(drawEndY >= g->wnd.j)
+			drawEndY = g->wnd.j - 1;
+		int spriteWidth = abs((int)(g->wnd.j/ (transformY)));
 		int drawStartX = -spriteWidth / 2 + spriteScreenX;
 		if(drawStartX < 0) drawStartX = 0;
 		int drawEndX = spriteWidth / 2 + spriteScreenX;
-		if(drawEndX >= g->wnd_x) drawEndX = g->wnd_x - 1;
-		//int spriteWidth = abs( int (h / (transformY)));
-		//int drawStartX = -spriteWidth / 2 + spriteScreenX;
-		//if(drawStartX < 0) drawStartX = 0;
-		//int drawEndX = spriteWidth / 2 + spriteScreenX;
-		//if(drawEndX >= w) drawEndX = w - 1;
-
-
-		//loop through every vertical stripe of the sprite on screen
+		if(drawEndX >= g->wnd.i) drawEndX = g->wnd.i - 1;
 		if (drawStartX <= x && x < drawEndX)
-		//for(int stripe = drawStartX; stripe < drawEndX; stripe++)
 		{
 			int texX = (int) (256 * (x - (-spriteWidth / 2 + spriteScreenX)) * g->s_img.x_size / spriteWidth) / 256;
-			//the conditions in the if are:
-			//1) it's in front of camera plane so you don't see things behind you
-			//2) it's on the screen (left)
-			//3) it's on the screen (right)
-			//4) ZBuffer, with perpendicular distance
-			if(transformY > 0 && x > 0 && x < g->wnd_x);
+			if(transformY > 0 && x > 0 && x < g->wnd.i);
 			{
 				int y;
 				y = drawStartY;
-				//for(int y = drawStartY; y < drawEndY; y++) //for every pixel of the current stripe
 				while(y < drawEndY)
 				{
-					int d = (y) * 256 - g->wnd_y * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
+					int d = (y) * 256 - g->wnd.j * 128 + spriteHeight * 128;
 					int texY = ((d * g->s_img.y_size) / spriteHeight) / 256;
-					//Uint32 color = texture[sprite[spriteOrder[i]].texture][texWidth * texY + texX]; //get current color from the texture
 					color = *((unsigned int *)(g->s_img.addr + texY * g->s_img.llen) + texX);
 					if((color & 0x00FFFFFF) != 0 && ymask[y] == 0)
 					{
@@ -653,14 +612,14 @@ void make_image(t_god *g)
 	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
 
 	x = 0;
-	while(x < g->wnd_x)
+	while(x < g->wnd.i)
 	{
 		ft_bzero(mx, MAX(g->map_h, g->map_w) * 4 * sizeof(int));
-		double cameraX = 2 * x / (double)(g->wnd_x) - 1;
+		double cameraX = 2 * x / (double)(g->wnd.i) - 1;
 		double rayDirX = g->pdx + g->planex * cameraX;
 		double rayDirY = g->pdy + g->planey * cameraX;
-		mapX = (int)(g->pli);
-		mapY = (int)(g->plj);
+		mapX = (int)(g->ppos.x);
+		mapY = (int)(g->ppos.y);
 
 		double sideDistX;
 		double sideDistY;
@@ -675,27 +634,26 @@ void make_image(t_god *g)
 		if(rayDirX < 0)
 		{
 			stepX = -1;
-			sideDistX = (g->pli - mapX) * deltaDistX;
+			sideDistX = (g->ppos.x - mapX) * deltaDistX;
 		}
 		else
 		{
 			stepX = 1;
-			sideDistX = (mapX + 1.0 - g->pli) * deltaDistX;
+			sideDistX = (mapX + 1.0 - g->ppos.x) * deltaDistX;
 		}
 		if(rayDirY < 0)
 		{
 			stepY = -1;
-			sideDistY = (g->plj - mapY) * deltaDistY;
+			sideDistY = (g->ppos.y - mapY) * deltaDistY;
 		}
 		else
 		{
 			stepY = 1;
-			sideDistY = (mapY + 1.0 - g->plj) * deltaDistY;
+			sideDistY = (mapY + 1.0 - g->ppos.y) * deltaDistY;
 		}
 		int mxi = 0;
 		while (hit == 0)
 		{
-			//jump to next map square, OR in x-direction, OR in y-direction
 			if(sideDistX < sideDistY)
 			{
 				sideDistX += deltaDistX;
@@ -708,41 +666,36 @@ void make_image(t_god *g)
 				mapY += stepY;
 				side = 1;
 			}
-			//Check if ray has hit a wall
 			if(g->map[mapX][mapY] == '1')
 				hit = 1;
 			else if (g->map[mapX][mapY] == '2')
 			{
-				//printf("mx[%d] : %d\n", mxi * 2, mapX);
 				mx[mxi * 2] = mapX;
 				mx[mxi * 2 + 1] = mapY;
 				mxi++;
 			}	
 		}
-		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
 		if(side == 0)
-			perpWallDist = (mapX - g->pli + (1 - stepX) / 2) / rayDirX;
+			perpWallDist = (mapX - g->ppos.x + (1 - stepX) / 2) / rayDirX;
 		else
-			perpWallDist = (mapY - g->plj + (1 - stepY) / 2) / rayDirY;
-		//Calculate height of line to draw on screen
-		int lineHeight = (int)(g->wnd_y / perpWallDist);
+			perpWallDist = (mapY - g->ppos.y + (1 - stepY) / 2) / rayDirY;
+		int lineHeight = (int)(g->wnd.j / perpWallDist);
 
-		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart;
-		drawStart = -lineHeight / 2 + g->wnd_y / 2;
+		drawStart = -lineHeight / 2 + g->wnd.j / 2;
 		int drawEnd;
-		drawEnd = lineHeight / 2 + g->wnd_y / 2;
+		drawEnd = lineHeight / 2 + g->wnd.j / 2;
 
 		t_img *texture_img;
 		double tx;
 		if(side == 0)
 		{
-			tx = g->plj + perpWallDist * rayDirY;
+			tx = g->ppos.y + perpWallDist * rayDirY;
 			texture_img = &g->no_img;
 		}
 		else
 		{
-			tx = g->pli + perpWallDist * rayDirX;
+			tx = g->ppos.x + perpWallDist * rayDirX;
 			texture_img = &g->ea_img;
 		}
 		tx -= floor(tx);
@@ -833,11 +786,11 @@ int	main(int argc, char **argv)
 	{
 		g.title = ft_strdup(argv[1]);
 		mlx_do_key_autorepeatoff(g.mlx);
-		g.w_img.p = mlx_new_image(g.mlx, g.wnd_x, g.wnd_y);
+		g.w_img.p = mlx_new_image(g.mlx, g.wnd.i, g.wnd.j);
 		g.w_img.addr = mlx_get_data_addr(g.w_img.p, &g.w_img.bpp, &g.w_img.llen, &g.w_img.endian);
 		if(!g.bmp)
 		{
-			g.win = mlx_new_window(g.mlx, g.wnd_x, g.wnd_y, g.title);
+			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.title);
 			mlx_hook(g.win, 0b10, 0b11, &hook_keypress_func, &g);
 			mlx_hook(g.win, 0b11, 0b10, &hook_keyrelease_func, &g);
 			mlx_hook(g.win, 17, 0x20000, &hook_exit_func, &g);
@@ -849,56 +802,48 @@ int	main(int argc, char **argv)
 	}
 }
 
-static void		ft_itoc(unsigned char *s, int i)
+void	littleendian(unsigned char *s, unsigned int n, int size)
 {
-	s[0] = (unsigned char)(i);
-	s[1] = (unsigned char)(i >> 8);
-	s[2] = (unsigned char)(i >> 16);
-	s[3] = (unsigned char)(i >> 24);
+	int i;
+	
+	i = 0;
+	s[i++] = (unsigned char)(n);
+	while(i < size)
+		s[i++] = (unsigned char)(n >>= 8);
 }
 
-static void		write_header(int fd, t_god *g)
+void	write_header(int fd, t_god *g)
 {
 	unsigned char	header[BMP_HEADER_SIZE + DIB_HEADER_SIZE];
-	int				filesize;
 
-	filesize = BMP_HEADER_SIZE + DIB_HEADER_SIZE +
-		(BMP_BPP * g->wnd_x * g->wnd_y);
 	ft_bzero(header, BMP_HEADER_SIZE + DIB_HEADER_SIZE);
 	ft_memcpy(header, "BM", 2);
-	ft_itoc(header + 2, filesize);
-	header[10] = (unsigned char)(BMP_HEADER_SIZE + DIB_HEADER_SIZE);
-	header[14] = (unsigned char)DIB_HEADER_SIZE;
-	ft_itoc(header + 18, g->wnd_x);
-	ft_itoc(header + 22, g->wnd_y);
-	header[26] = (unsigned char)BMP_NUM_PLANES;
-	header[28] = (unsigned int)(BMP_BPP * 8);
+	littleendian(header + 2, BMP_HEADER_SIZE + DIB_HEADER_SIZE +
+		(BMP_BPP * g->wnd.i * g->wnd.j), 4);
+	littleendian(header + 10, BMP_HEADER_SIZE + DIB_HEADER_SIZE, 4);
+	littleendian(header + 14, DIB_HEADER_SIZE, 4);
+	littleendian(header + 18, g->wnd.i, 4);
+	littleendian(header + 22, g->wnd.j, 4);
+	littleendian(header + 26, BMP_NUM_PLANES, 2);
+	littleendian(header + 28, BMP_BPP * 8, 2);
 	write(fd, header, BMP_HEADER_SIZE + DIB_HEADER_SIZE);
 }
 
-static int		write_pixels(int fd, t_god *g)
+int		write_pixels(int fd, t_god *g)
 {
-	int				row;
-	int				col;
-	int				row_size;
-	int				padding;
+	t_ivec			it;
 	unsigned char	*line;
 
-	row = g->wnd_y - 1;
-	row_size = g->wnd_x * BMP_BPP;
-	if (!(line = malloc(sizeof(char) * row_size)))
+	if (!(line = ft_calloc(sizeof(char), g->wnd.i * BMP_BPP)))
 		return (-1);
-	ft_bzero(line, row_size);
-	while (row >= 0)
+	it.i = g->wnd.j;
+	while (--it.i >= 0)
 	{
-		col = 0;
-		while (col < g->wnd_x)
-		{
-			ft_itoc(line + (col * BMP_BPP), *((unsigned int *)(g->w_img.addr + row * g->w_img.llen) + col));
-			col++;
-		}
-		write(fd, line, row_size);
-		row--;
+		it.j = -1;
+		while (++it.j < g->wnd.i)
+			littleendian(line + (it.j * BMP_BPP), 
+			*((unsigned int *)(g->w_img.addr + it.i * g->w_img.llen) + it.j), 4);
+		write(fd, line, g->wnd.i * BMP_BPP);
 	}
 	free(line);
 	return (0);
@@ -914,7 +859,6 @@ void			write_imgf(t_god *g)
 		return ;
 	}
 	ft_memcpy(g->bmp_fname + ft_strlen(g->bmp_fname) - 3, "bmp", 3);
-
 	if ((fd = open(g->bmp_fname, O_CREAT | O_WRONLY, 0666)) == -1)
 	{
 		set_err_msg(g, "file open error in making bmp file.");
