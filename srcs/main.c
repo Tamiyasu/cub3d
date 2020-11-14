@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 12:21:35 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 12:27:25 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -447,6 +447,12 @@ int		load_settings(t_god *g, int argc, char **argv)
 	free(line);
 	if (argc == 3)
 		g->bmp = 1;
+	g->title = ft_strdup(argv[1]);
+	mlx_do_key_autorepeatoff(g->mlx);
+	g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
+	g->w_img.addr = mlx_get_data_addr(
+			g->w_img.p, &g->w_img.bpp, &g->w_img.llen, &g->w_img.endian);
+
 }
 
 void	exit_func(t_god *g)
@@ -792,11 +798,6 @@ int		main(int argc, char **argv)
 	}
 	else
 	{
-		g.title = ft_strdup(argv[1]);
-		mlx_do_key_autorepeatoff(g.mlx);
-		g.w_img.p = mlx_new_image(g.mlx, g.wnd.i, g.wnd.j);
-		g.w_img.addr = mlx_get_data_addr(
-			g.w_img.p, &g.w_img.bpp, &g.w_img.llen, &g.w_img.endian);
 		if (!g.bmp)
 		{
 			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.title);
