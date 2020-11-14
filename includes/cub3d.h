@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/14 11:46:30 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/14 11:47:55 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define MOVESPEED 0.01
 # define ROTSPEED  0.01
 # define WALLDIST  0.2
- 
+
 # define KEY_CODE_W     119
 # define KEY_CODE_A      97
 # define KEY_CODE_S     115
@@ -102,7 +102,7 @@ typedef struct	s_god
 	t_fvec		pdir;
 	t_fvec		pvew;
 	double		pdx;
-	double  	pdy;
+	double		pdy;
 	double		planex;
 	double  	planey;
 	double		plv;
@@ -115,7 +115,6 @@ typedef struct	s_god
 void	make_image(t_god *g);
 void	paint_bg(t_god *g);
 int		set_err_msg(t_god *g, char *msg);
-void set_ivec(t_ivec *v, long i, long j);
-void print_game(t_god *g); //please remove before finish;
+void	set_ivec(t_ivec *v, long i, long j);
 
 #endif
