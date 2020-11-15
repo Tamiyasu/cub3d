@@ -6,7 +6,7 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/11/15 11:56:02 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/15 12:44:23 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,6 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 #CFLAGS = -g -fsanitize=address
 RM = rm -f
-INCLUDE = -I./includes -I./libft
 SRCS_DIR = srcs
 SRCS = ${SRCS_DIR}/main.c
 SRCS += ${SRCS_DIR}/get_next_line.c
@@ -36,6 +35,8 @@ LIBFT = ${LIBFT_DIR}/libft.a
 
 MINILIBX_DIR = minilibx-linux
 MINILIBX = ${MINILIBX_DIR}/libmlx.a
+
+INCLUDE = -I./includes -I./${LIBFT_DIR} -I./${MINILIBX_DIR}
 
 #LIBS = -L. -L./libft -lft -I/usr/local/include -L/usr/local/lib -L./minilibx-linux -lmlx_Linux -lX11 -lXext -lm -lbsd
 LIBS  = -lX11 -lXext -lm -lbsd -L${LIBFT_DIR} -lft -L${MINILIBX_DIR} -lmlx
