@@ -6,7 +6,7 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/11/15 12:44:23 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/15 12:58:26 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ MINILIBX = ${MINILIBX_DIR}/libmlx.a
 INCLUDE = -I./includes -I./${LIBFT_DIR} -I./${MINILIBX_DIR}
 
 #LIBS = -L. -L./libft -lft -I/usr/local/include -L/usr/local/lib -L./minilibx-linux -lmlx_Linux -lX11 -lXext -lm -lbsd
-LIBS  = -lX11 -lXext -lm -lbsd -L${LIBFT_DIR} -lft -L${MINILIBX_DIR} -lmlx
+LIBS  = -lmlx -lX11 -lXext -lm -lbsd -L${LIBFT_DIR} -lft -L${MINILIBX_DIR}
 
 OBJS = ${SRCS:.c=.o}
 all: ${NAME}
