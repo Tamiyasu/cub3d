@@ -6,16 +6,16 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:52:39 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:11:15 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int		loop_func(t_god *g)
+int	loop_func(t_god *g)
 {
-	rotation(&g->pdir, g->rotSpeed);
-	rotation(&g->pvew, g->rotSpeed);
+	rotation(&g->pdir, g->rotspeed);
+	rotation(&g->pvew, g->rotspeed);
 	next_pl(g);
 	paint_bg(g);
 	make_image(g);
@@ -32,57 +32,57 @@ int		loop_func(t_god *g)
 	return (0);
 }
 
-int			hook_keypress_func(int key_code, t_god *g)
+int	hook_keypress_func(int key_code, t_god *g)
 {
 	if (key_code == KEY_CODE_W)
-		g->moveSpeed_ga += MOVESPEED;
+		g->movespeed_ga += MOVESPEED;
 	if (key_code == KEY_CODE_S)
-		g->moveSpeed_ga -= MOVESPEED;
+		g->movespeed_ga -= MOVESPEED;
 	if (key_code == KEY_CODE_D)
-		g->moveSpeed_sw += MOVESPEED;
+		g->movespeed_sw += MOVESPEED;
 	if (key_code == KEY_CODE_A)
-		g->moveSpeed_sw -= MOVESPEED;
+		g->movespeed_sw -= MOVESPEED;
 	if (key_code == KEY_CODE_LA)
-		g->rotSpeed += ROTSPEED;
+		g->rotspeed += ROTSPEED;
 	if (key_code == KEY_CODE_RA)
-		g->rotSpeed -= ROTSPEED;
+		g->rotspeed -= ROTSPEED;
 	if (key_code == KEY_CODE_UA)
-		g->moveSpeed_ga += MOVESPEED;
+		g->movespeed_ga += MOVESPEED;
 	if (key_code == KEY_CODE_DA)
-		g->moveSpeed_ga -= MOVESPEED;
+		g->movespeed_ga -= MOVESPEED;
 	if (key_code == KEY_CODE_ESC)
 		g->exit = 1;
 	return (0);
 }
 
-int			hook_keyrelease_func(int key_code, t_god *g)
+int	hook_keyrelease_func(int key_code, t_god *g)
 {
 	if (key_code == KEY_CODE_W)
-		g->moveSpeed_ga -= MOVESPEED;
+		g->movespeed_ga -= MOVESPEED;
 	if (key_code == KEY_CODE_S)
-		g->moveSpeed_ga += MOVESPEED;
+		g->movespeed_ga += MOVESPEED;
 	if (key_code == KEY_CODE_D)
-		g->moveSpeed_sw -= MOVESPEED;
+		g->movespeed_sw -= MOVESPEED;
 	if (key_code == KEY_CODE_A)
-		g->moveSpeed_sw += MOVESPEED;
+		g->movespeed_sw += MOVESPEED;
 	if (key_code == KEY_CODE_LA)
-		g->rotSpeed -= ROTSPEED;
+		g->rotspeed -= ROTSPEED;
 	if (key_code == KEY_CODE_RA)
-		g->rotSpeed += ROTSPEED;
+		g->rotspeed += ROTSPEED;
 	if (key_code == KEY_CODE_UA)
-		g->moveSpeed_ga -= MOVESPEED;
+		g->movespeed_ga -= MOVESPEED;
 	if (key_code == KEY_CODE_DA)
-		g->moveSpeed_ga += MOVESPEED;
+		g->movespeed_ga += MOVESPEED;
 	return (0);
 }
 
-int		hook_exit_func(t_god *g)
+int	hook_exit_func(t_god *g)
 {
 	g->exit = 1;
 	return (0);
 }
 
-int		main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_god	g;
 

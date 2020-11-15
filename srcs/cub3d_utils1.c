@@ -6,13 +6,13 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:45:27 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:47:57 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:02:54 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	my_mlx_pixel_put(t_god *g, int x, int y, int color)
+void			my_mlx_pixel_put(t_god *g, int x, int y, int color)
 {
 	char	*dst;
 
@@ -28,7 +28,7 @@ unsigned int	pic_color(t_img *img, int i, int j)
 		return (0);
 }
 
-int		set_err_msg(t_god *g, char *msg)
+int				set_err_msg(t_god *g, char *msg)
 {
 	char *free_tmp;
 
@@ -43,7 +43,7 @@ int		set_err_msg(t_god *g, char *msg)
 	return (0);
 }
 
-void	init_god(t_god *g)
+void			init_god(t_god *g)
 {
 	ft_bzero(g, sizeof(t_god));
 	g->ce_rgb = -1;
@@ -55,7 +55,7 @@ void	init_god(t_god *g)
 		mlx_get_screen_size(g->mlx, &g->scr_x, &g->scr_y);
 }
 
-void	destroy_god(t_god *g)
+void			destroy_god(t_god *g)
 {
 	if (g->s_img.p)
 		mlx_destroy_image(g->mlx, g->s_img.p);

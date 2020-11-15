@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:01:58 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:07:13 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	check_around(t_god *g, char **map, t_ivec *v)
 		map[v->i][v->j + 1] == ' ' || map[v->i + 1][v->j] == ' ');
 }
 
-int	        map_closecheck(t_ivec start_pos, char **map, t_god *g)
+int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 {
 	t_list *lst;
 	t_list *lst_last;
@@ -68,4 +68,3 @@ int	        map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	}
 	return (0);
 }
-

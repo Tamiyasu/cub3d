@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:26:47 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:35:15 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:07:50 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ static t_fvec	f_transform(t_god *g, int i, int j)
 	return (ret_fvec);
 }
 
-
-static void	write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
+static void		write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
 {
 	int				y;
 	int				d;
@@ -53,7 +52,7 @@ static void	write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
 	}
 }
 
-static void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
+static void		write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 {
 	t_fvec			transform;
 	t_ivec			de;
@@ -71,7 +70,7 @@ static void	write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 	write_a_sprt_loop(g, &de, x, ymask);
 }
 
-void	sprt_verline(t_god *g, int x, int *mx)
+void			sprt_verline(t_god *g, int x, int *mx)
 {
 	int				i;
 	t_ivec			s_cell;

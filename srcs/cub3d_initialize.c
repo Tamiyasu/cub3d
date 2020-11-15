@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:13:03 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:03:35 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	interpret_line(t_god *g, char *line)
 	free(line);
 }
 
-int 		load_settings(t_god *g, int argc, char **argv)
+int			load_settings(t_god *g, int argc, char **argv)
 {
 	int		cub_f_len;
 	int		fd;

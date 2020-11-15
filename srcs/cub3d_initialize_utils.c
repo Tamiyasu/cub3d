@@ -6,13 +6,13 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:15:54 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:52:07 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:01:16 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static t_img    *set_target(t_god *g, char *str, int *start_pos)
+static t_img	*set_target(t_god *g, char *str, int *start_pos)
 {
 	*start_pos = 2;
 	if (!ft_memcmp(str, "S ", 2))
@@ -31,7 +31,7 @@ static t_img    *set_target(t_god *g, char *str, int *start_pos)
 	return (NULL);
 }
 
-void	        read_nmb(char **str, int *int_p, int max, int max_error)
+void			read_nmb(char **str, int *int_p, int max, int max_error)
 {
 	skip_spacis(str);
 	if (ft_isdigit(**str))
@@ -45,7 +45,7 @@ void	        read_nmb(char **str, int *int_p, int max, int max_error)
 	skip_spacis(str);
 }
 
-void	        read_r(t_god *g, char *str)
+void			read_r(t_god *g, char *str)
 {
 	if (g->wnd.i || g->wnd.j)
 	{
@@ -64,7 +64,7 @@ void	        read_r(t_god *g, char *str)
 	}
 }
 
-void	        read_color(t_god *g, char *str)
+void			read_color(t_god *g, char *str)
 {
 	int *target_p;
 	int red;

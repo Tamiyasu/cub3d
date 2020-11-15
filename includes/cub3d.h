@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:55:49 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:11:17 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct	s_ivec
 	int j;
 }				t_ivec;
 
-typedef struct  s_dvec
+typedef struct	s_fvec
 {
 	double x;
 	double y;
@@ -75,11 +75,11 @@ typedef struct	s_god
 	char			*cub_fname;
 	char			*bmp_fname;
 	void			*mlx;
-    void			*win;
+	void			*win;
 	t_img			w_img;
 	t_ivec			wnd;
-    int				scr_x;
-    int				scr_y;
+	int				scr_x;
+	int				scr_y;
 	char			*title;
 	t_img			ea_img;
 	t_img			we_img;
@@ -92,15 +92,15 @@ typedef struct	s_god
 	size_t			map_h;
 	size_t			map_w;
 	int				bmp;
-	char			*err_msg;		
+	char			*err_msg;
 	t_list			*map_list;
 	t_fvec			ppos;
 	t_fvec			pdir;
 	t_fvec			pvew;
 	int				exit;
-	double 			rotSpeed;
-	double			moveSpeed_ga;
-	double			moveSpeed_sw;
+	double			rotspeed;
+	double			movespeed_ga;
+	double			movespeed_sw;
 	t_fvec			i_ray_dir;
 	t_ivec			i_mapi;
 	int				i_side;

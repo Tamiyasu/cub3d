@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:52:54 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:53:27 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:11:15 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	next_pl(t_god *g)
 	t_fvec	step;
 	double	wdist;
 
-	step.x = g->pdir.x * g->moveSpeed_ga + g->pdir.y * g->moveSpeed_sw;
-	step.y = g->pdir.y * g->moveSpeed_ga - g->pdir.x * g->moveSpeed_sw;
+	step.x = g->pdir.x * g->movespeed_ga + g->pdir.y * g->movespeed_sw;
+	step.y = g->pdir.y * g->movespeed_ga - g->pdir.x * g->movespeed_sw;
 	wdist = 0 < step.x ? WALLDIST : -WALLDIST;
 	if (g->map[(int)(g->ppos.x + step.x + wdist)][(int)(g->ppos.y)] == '1')
 		step.x = 0;
