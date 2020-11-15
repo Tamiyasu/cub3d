@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 01:27:08 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 11:55:49 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@
 # define DIB_HEADER_SIZE 40
 # define BMP_BPP 4
 # define BMP_NUM_PLANES 1
-
-# define CUB_COLOR_DUP "The cub file has double setting in ceiling or floor color.\n"
 
 typedef struct	s_img
 {
@@ -91,8 +89,8 @@ typedef struct	s_god
 	int				ce_rgb;
 	int				fl_rgb;
 	char			**map;
-	int				map_h;
-	int				map_w;
+	size_t			map_h;
+	size_t			map_w;
 	int				bmp;
 	char			*err_msg;		
 	t_list			*map_list;
@@ -114,10 +112,33 @@ typedef struct	s_god
 	int				i_s_size;
 }				t_god;
 
-void	make_image(t_god *g);
-void	paint_bg(t_god *g);
-int		set_err_msg(t_god *g, char *msg);
-void	set_ivec(t_ivec *v, long i, long j);
-void	write_imgf(t_god *g);
+void			exit_func(t_god *g);
+void			next_pl(t_god *g);
+void			paint_bg(t_god *g);
+int				set_err_msg(t_god *g, char *msg);
+unsigned int	pic_color(t_img *img, int i, int j);
+void			destroy_god(t_god *g);
+void			init_god(t_god *g);
+void			my_mlx_pixel_put(t_god *g, int x, int y, int color);
+void			ft_lstdelhead(t_list **lst, void (*del)(void *));
+void			rotation(t_fvec *v, double rot);
+void			set_ivec(t_ivec *v, long i, long j);
+void			set_fvec(t_fvec *v, double x, double y);
+void			skip_spacis(char **str);
+void			read_color(t_god *g, char *str);
+void			read_img(t_god *g, char *str);
+void			read_nmb(char **str, int *int_p, int max, int max_error);
+void			read_r(t_god *g, char *str);
+double			f_perpdist(t_god *g, t_ivec *mapi, t_fvec *ray_dir, int side);
+double			f_tx(t_god *g, double perpdist, t_fvec *ray_dir, int side);
+t_fvec			f_ray_dir(t_god *g, int x);
+t_fvec			f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir);
+t_img			*f_texture_im(t_god *g);
+void			sprt_verline(t_god *g, int x, int *mx);
+void			make_image(t_god *g);
+int 			load_settings(t_god *g, int argc, char **argv);
+void			eval_map(t_god *g, char *line, char *cfg_str, char *no_map_str);
+int				map_closecheck(t_ivec start_pos, char **map, t_god *g);
+void			write_imgf(t_god *g);
 
 #endif

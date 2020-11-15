@@ -6,19 +6,30 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/11/06 21:52:53 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/15 11:56:02 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
-#CFLAGS = -Wall -Wextra -Werror
-CFLAGS = -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -g -fsanitize=address
 RM = rm -f
 INCLUDE = -I./includes -I./libft
 SRCS_DIR = srcs
 SRCS = ${SRCS_DIR}/main.c
 SRCS += ${SRCS_DIR}/get_next_line.c
+SRCS += ${SRCS_DIR}/cub3d_bmpwrite.c
+SRCS += ${SRCS_DIR}/cub3d_mapcheck.c
+SRCS += ${SRCS_DIR}/cub3d_mapeval.c
+SRCS += ${SRCS_DIR}/cub3d_initialize.c
+SRCS += ${SRCS_DIR}/cub3d_initialize_utils.c
+SRCS += ${SRCS_DIR}/cub3d_makeimage.c
+SRCS += ${SRCS_DIR}/cub3d_makeimage_utils.c
+SRCS += ${SRCS_DIR}/cub3d_makeimage_sprite.c
+SRCS += ${SRCS_DIR}/utils.c
+SRCS += ${SRCS_DIR}/cub3d_utils1.c
+SRCS += ${SRCS_DIR}/cub3d_utils2.c
 
 LIBFT_DIR = libft
 LIBFT = ${LIBFT_DIR}/libft.a
