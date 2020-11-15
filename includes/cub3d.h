@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:11:17 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:12:41 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ t_fvec			f_sidedist(t_god *g, t_ivec *mapi, t_fvec *ray_dir);
 t_img			*f_texture_im(t_god *g);
 void			sprt_verline(t_god *g, int x, int *mx);
 void			make_image(t_god *g);
-int 			load_settings(t_god *g, int argc, char **argv);
+int				load_settings(t_god *g, int argc, char **argv);
 void			eval_map(t_god *g, char *line, char *cfg_str, char *no_map_str);
 int				map_closecheck(t_ivec start_pos, char **map, t_god *g);
 void			write_imgf(t_god *g);

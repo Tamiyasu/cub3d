@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:07:33 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:14:25 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,4 +110,3 @@ void		eval_map(t_god *g, char *line, char *cfg_str, char *no_map_str)
 		g->map_w = g->map_w < ft_strlen(line) ? ft_strlen(line) : g->map_w;
 	}
 }
-

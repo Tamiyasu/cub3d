@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:21:44 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 11:36:23 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:14:09 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	set_mapi(t_ivec *mapi, t_fvec *sidedist, t_ivec *step)
 		mapi->j += step->j;
 }
 
-static int  find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
+static int	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 {
 	int		mxi;
 	int		side;
@@ -45,7 +45,7 @@ static int  find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 	return (side);
 }
 
-static void	    wall_verline(t_god *g, int x)
+static void	wall_verline(t_god *g, int x)
 {
 	t_ivec			de;
 	t_ivec			tp;
@@ -66,7 +66,7 @@ static void	    wall_verline(t_god *g, int x)
 	}
 }
 
-static void	    write_vertical_line(t_god *g, int x)
+static void	write_vertical_line(t_god *g, int x)
 {
 	int		*mx;
 
@@ -82,7 +82,7 @@ static void	    write_vertical_line(t_god *g, int x)
 	free(mx);
 }
 
-void	make_image(t_god *g)
+void		make_image(t_god *g)
 {
 	int x;
 
