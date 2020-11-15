@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:15:54 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:01:16 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 12:15:50 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void			read_color(t_god *g, char *str)
 	*target_p = (red << 16 | green << 8 | blue);
 }
 
-void	        read_img(t_god *g, char *str)
+void			read_img(t_god *g, char *str)
 {
 	char	*f_name;
 	t_img	*img;
