@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/16 22:01:45 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/16 22:02:55 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,16 @@ static int	map_check(t_god *g)
 {
 	t_ivec	index_v;
 	t_ivec	p_cell;
-	char	**for_close_check;
+	char	**chec_map;
 
-	if (!(for_close_check = malloc(sizeof(char *) * (g->map_h))))
+	if (!(chec_map = malloc(sizeof(char *) * (g->map_h))))
 		return (set_err_msg(g, "malloc error\n"));
 	index_v.i = -1;
 	while (++index_v.i < (int)g->map_h)
 	{
-		if (!(*(for_close_check + index_v.i) = 
-		ft_strdup(*(g->map + index_v.i))))
+		if (!(*(chec_map + index_v.i) = ft_strdup(*(g->map + index_v.i))))
 		{
-			free_2d((void **)for_close_check, g->map_h);
+			free_2d((void **)chec_map, g->map_h);
 			return (set_err_msg(g, "malloc error\n"));
 		}
 		index_v.j = -1;
@@ -71,8 +70,8 @@ static int	map_check(t_god *g)
 				set_start_pos(g, &p_cell);
 			}
 	}
-	map_closecheck(p_cell, for_close_check, g);
-	free_2d((void **)for_close_check, g->map_h);
+	map_closecheck(p_cell, chec_map, g);
+	free_2d((void **)chec_map, g->map_h);
 	return (0);
 }
 
