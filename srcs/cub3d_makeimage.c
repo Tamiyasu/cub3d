@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:21:44 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:14:09 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 17:39:28 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,12 @@ static void	wall_verline(t_god *g, int x)
 	}
 }
 
-static void	write_vertical_line(t_god *g, int x)
+static int	write_vertical_line(t_god *g, int x)
 {
 	int		*mx;
 
-	mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4);
+	if (!(mx = ft_calloc(sizeof(int), MAX(g->map_h, g->map_w) * 4)))
+		return(set_err_msg(g, "malloc error!"));
 	g->i_ray_dir = f_ray_dir(g, x);
 	set_ivec(&g->i_mapi, (int)(g->ppos.x), (int)(g->ppos.y));
 	g->i_side = find_w_n_s(g, &g->i_ray_dir, &g->i_mapi, mx);
@@ -80,6 +81,7 @@ static void	write_vertical_line(t_god *g, int x)
 	wall_verline(g, x);
 	sprt_verline(g, x, mx);
 	free(mx);
+	return (0);
 }
 
 void		make_image(t_god *g)

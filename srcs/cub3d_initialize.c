@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:03:35 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 17:35:35 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,13 @@ static void	interpret_line(t_god *g, char *line)
 	char	*temp_str;
 	char	*non_map_parts_tmp;
 
-	temp_str = ft_strtrim(line, " \t\n\v\f\r");
-	non_map_parts_tmp = ft_strtrim(line, " 012NSWE");
-	if (!g->map && !g->map_list)
+	if (!(temp_str = ft_strtrim(line, " \t\n\v\f\r")))
+		set_err_msg(g, "malloc error!\n");
+	if (!(non_map_parts_tmp = ft_strtrim(line, " 012NSWE")))
+		set_err_msg(g, "malloc error!\n");
+	if (!g->map && !g->map_list && temp_str && non_map_parts_tmp)
 		eval_conf(g, line, temp_str, non_map_parts_tmp);
-	else if (!g->map)
+	else if (!g->map && temp_str && non_map_parts_tmp)
 		eval_map(g, line, temp_str, non_map_parts_tmp);
 	else if (ft_strlen(temp_str))
 		set_err_msg(g, "Don't put any describing after map\n");

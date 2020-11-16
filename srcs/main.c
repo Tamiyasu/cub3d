@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 16:57:53 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 21:59:46 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,14 @@ int	loop_func(t_god *g)
 	paint_bg(g);
 	make_image(g);
 	if (g->exit)
-	{
 		exit_func(g);
-		mlx_do_sync(g->mlx);
-	}
 	else if (g->bmp)
 	{
 		write_imgf(g);
 		exit_func(g);
 	}
-	else
-		mlx_put_image_to_window(g->mlx, g->win, g->w_img.p, 0, 0);
+	mlx_do_sync(g->mlx);
+	mlx_put_image_to_window(g->mlx, g->win, g->w_img.p, 0, 0);
 	return (0);
 }
 

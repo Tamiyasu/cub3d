@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:15:54 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:15:50 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 17:31:30 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,13 @@ void			read_img(t_god *g, char *str)
 	int		start_pos;
 
 	img = set_target(g, str, &start_pos);
-	str += start_pos;
-	f_name = ft_strtrim(str, " \t\n\v\f\r");
 	if (img->p)
 	{
 		set_err_msg(g, "Don't set texture twice.\n");
-		free(f_name);
 		return ;
 	}
+	str += start_pos;
+	f_name = ft_strtrim(str, " \t\n\v\f\r");
 	img->p = mlx_xpm_file_to_image(g->mlx, f_name, &img->x_size, &img->y_size);
 	if (!img->p)
 		set_err_msg(g, "A texture file is not able to load.\n");

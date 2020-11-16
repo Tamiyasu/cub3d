@@ -6,32 +6,34 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:07:13 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/15 17:49:27 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	set_r_on_map(char **map, int i, int j, t_list **lst_last)
+static int	set_r_on_map(char **map, int i, int j, t_list **lst_last)
 {
 	t_ivec *tmp;
 
 	if (map[i][j] != '1' && map[i][j] != 'R')
 	{
 		map[i][j] = 'R';
-		tmp = malloc(sizeof(t_ivec));
+		if (!(tmp = malloc(sizeof(t_ivec))))
+			return (0);
 		set_ivec(tmp, i, j);
 		(*lst_last)->next = ft_lstnew(tmp);
 		*lst_last = (*lst_last)->next;
 	}
+	return (1);
 }
 
-static void	set_r_around(char **map, t_ivec *v, t_list **lst_last)
+static int	set_r_around(char **map, t_ivec *v, t_list **lst_last)
 {
-	set_r_on_map(map, v->i, v->j - 1, lst_last);
-	set_r_on_map(map, v->i, v->j + 1, lst_last);
-	set_r_on_map(map, v->i - 1, v->j, lst_last);
-	set_r_on_map(map, v->i + 1, v->j, lst_last);
+	return (set_r_on_map(map, v->i, v->j - 1, lst_last) &&
+			set_r_on_map(map, v->i, v->j + 1, lst_last) &&
+			set_r_on_map(map, v->i - 1, v->j, lst_last) &&
+			set_r_on_map(map, v->i + 1, v->j, lst_last));
 }
 
 static int	check_around(t_god *g, char **map, t_ivec *v)
@@ -59,11 +61,9 @@ int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	while (lst)
 	{
 		if (check_around(g, map, (t_ivec *)(lst->content)))
-		{
-			ft_lstclear(&lst, &free);
 			return (set_err_msg(g, "map is not closed.\n"));
-		}
-		set_r_around(map, (t_ivec *)(lst->content), &lst_last);
+		if (!set_r_around(map, (t_ivec *)(lst->content), &lst_last))
+			return (set_err_msg(g, "malloc error.\n"));
 		ft_lstdelhead(&lst, &free);
 	}
 	return (0);
