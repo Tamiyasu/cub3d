@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 18:03:09 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/16 22:01:45 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,12 @@ static int	map_check(t_god *g)
 	index_v.i = -1;
 	while (++index_v.i < (int)g->map_h)
 	{
-		if (!(*(for_close_check + index_v.i) = ft_strdup(*(g->map + index_v.i))))
+		if (!(*(for_close_check + index_v.i) = 
+		ft_strdup(*(g->map + index_v.i))))
 		{
 			free_2d((void **)for_close_check, g->map_h);
 			return (set_err_msg(g, "malloc error\n"));
-		}			
+		}
 		index_v.j = -1;
 		while (++index_v.j < (int)g->map_w)
 			if (ft_strchr("NSWE", g->map[index_v.i][index_v.j]))
