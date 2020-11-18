@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 01:13:25 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 01:15:53 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int			load_settings(t_god *g, int argc, char **argv)
 	g->bmp = argc == 3 ? 1 : 0;
 	mlx_do_key_autorepeatoff(g->mlx);
 	check_settings(g);
-	if(g->err_msg)
+	if(!g->err_msg)
 		g->w_img.p = mlx_new_image(g->mlx, g->wnd.i, g->wnd.j);
 	if(!g->err_msg)
 		g->w_img.addr = mlx_get_data_addr(
