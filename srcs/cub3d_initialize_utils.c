@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:15:54 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 17:31:30 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:20:12 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 static t_img	*set_target(t_god *g, char *str, int *start_pos)
 {
 	*start_pos = 2;
-	if (!ft_memcmp(str, "S ", 2))
+	if (str[1] && !ft_memcmp(str, "S ", 2))
 	{
 		*start_pos = 1;
 		return (&g->s_img);
 	}
-	if (!ft_memcmp(str, "SO ", 3))
+	if (str[2] && !ft_memcmp(str, "SO ", 3))
 		return (&g->so_img);
-	if (!ft_memcmp(str, "WE ", 3))
+	if (str[2] && !ft_memcmp(str, "WE ", 3))
 		return (&g->we_img);
-	if (!ft_memcmp(str, "NO ", 3))
+	if (str[2] && !ft_memcmp(str, "NO ", 3))
 		return (&g->no_img);
-	if (!ft_memcmp(str, "EA ", 3))
+	if (str[2] && !ft_memcmp(str, "EA ", 3))
 		return (&g->ea_img);
 	return (NULL);
 }
