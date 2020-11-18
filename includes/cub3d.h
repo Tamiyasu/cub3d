@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 02:10:06 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 03:07:37 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 # include "libft.h"
 # include "get_next_line.h"
 
-# define ABS(x) (0 < (x)) ? (x) : -(x)
-# define MIN(a, b) ((a) < (b)) ? (a) : (b)
-# define MAX(a, b) ((a) < (b)) ? (b) : (a)
+# define ABS(x) ((0 < (x)) ? (x) : -(x))
+# define MIN(a, b) (((a) < (b)) ? (a) : (b))
+# define MAX(a, b) (((a) < (b)) ? (b) : (a))
 
 # define MOVESPEED 0.01
 # define ROTSPEED  0.01
