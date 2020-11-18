@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 01:15:53 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 01:32:36 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static int	check_settings(t_god *g)
 		set_err_msg(g, "Please set north wall texture.\n");
 	if (!g->s_img.p)
 		set_err_msg(g, "Please set sprite wall texture.\n");
+	if (!g->map_h || !g->map_w)
+		set_err_msg(g, "Map is not found.\n");
 	return (0);
 }
 
