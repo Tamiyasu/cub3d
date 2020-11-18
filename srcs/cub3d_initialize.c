@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 01:32:36 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:31:17 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,24 @@ static void	interpret_line(t_god *g, char *line)
 	free(line);
 }
 
+static int	load_files(t_god *g, int argc, char **argv)
+{
+	int		fd;
+	char	*line;
+
+	if (!g->cub_fname || 0 > (fd = open(g->cub_fname, O_RDONLY)))
+		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
+	while (0 < get_next_line(fd, &line))
+		interpret_line(g, line);
+	interpret_line(g, line);
+	line = ft_strdup("");
+	interpret_line(g, line);
+	close(fd);
+}
+
 int			load_settings(t_god *g, int argc, char **argv)
 {
 	int		cub_f_len;
-	int		fd;
-	char	*line;
 
 	if (argc < 2 || 3 < argc)
 		return (set_err_msg(g, "Please specify the argument correctly.\n"));
@@ -90,13 +103,7 @@ int			load_settings(t_god *g, int argc, char **argv)
 	if (argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
 		return (set_err_msg(g, "plsese use \"--save\" in 2nd args\n"));
 	g->cub_fname = ft_strdup(argv[1]);
-	if (!g->cub_fname || 0 > (fd = open(g->cub_fname, O_RDONLY)))
-		return (set_err_msg(g, "the '.cub' file is not exist!\n"));
-	while (0 < get_next_line(fd, &line))
-		interpret_line(g, line);
-	interpret_line(g, line);
-	line = ft_strdup("");
-	interpret_line(g, line);
+	load_files(g, argc, argv);
 	g->bmp = argc == 3 ? 1 : 0;
 	mlx_do_key_autorepeatoff(g->mlx);
 	check_settings(g);
