@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 00:11:20 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:31:05 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,10 @@ static int	map_check(t_god *g)
 				set_start_pos(g, &p_cell);
 			}
 	}
-	if(0 <= p_cell.i && 0 <= p_cell.j)
-		map_closecheck(p_cell, chec_map, g);
-	else
+	if(p_cell.i < 0 && p_cell.j < 0)
 		set_err_msg(g, "No player position\n");
+	if(!g->err_msg)
+		map_closecheck(p_cell, chec_map, g);
 	free_2d((void **)chec_map, g->map_h);
 	return (0);
 }

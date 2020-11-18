@@ -4,4 +4,6 @@
 *:Zone.Identifier
 .vscode/
 cub3D
+textures
+x/
 srcs/print_game.c

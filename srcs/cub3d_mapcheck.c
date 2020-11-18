@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 00:11:54 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:35:33 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,14 @@ int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	map[pos->i][pos->j] = 'R';
 	lst = ft_lstnew(pos);
 	lst_last = lst;
-	while (lst)
+	while (lst && !g->err_msg)
 	{
 		if (check_around(g, map, (t_ivec *)(lst->content)))
-			return (set_err_msg(g, "map is not closed.\n"));
+			set_err_msg(g, "map is not closed.\n");
 		if (!set_r_around(map, (t_ivec *)(lst->content), &lst_last))
-			return (set_err_msg(g, "malloc error.\n"));
+			set_err_msg(g, "malloc error.\n");
 		ft_lstdelhead(&lst, &free);
 	}
+	ft_lstclear(&lst, &free);
 	return (0);
 }
