@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 20:54:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:10:06 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct	s_god
 	int				bmp;
 	char			*err_msg;
 	t_list			*map_list;
+	t_ivec			scell;
 	t_fvec			ppos;
 	t_fvec			pdir;
 	t_fvec			pvew;

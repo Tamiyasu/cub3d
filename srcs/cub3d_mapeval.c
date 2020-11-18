@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 00:31:05 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:16:43 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,25 @@ static void	free_2d(void **v, size_t i_size)
 	free(v);
 }
 
-static void	set_start_pos(t_god *g, t_ivec *p_pos)
+static void	set_start_pos(t_god *g, t_ivec *index_v)
 {
 	t_fvec player_pos;
 	t_fvec player_direction;
 	t_fvec player_view_plain;
 	double rot;
 
+	set_ivec(&g->scell, index_v->i, index_v->j);
 	if(g->ppos.x > 0)
 		set_err_msg(g, "Multi start position error\n");
-	set_fvec(&player_pos, p_pos->j + 0.5, p_pos->i + 0.5);
+	set_fvec(&player_pos, g->scell.j + 0.5, g->scell.i + 0.5);
 	set_fvec(&player_direction, -1, 0);
 	set_fvec(&player_view_plain, 0, (double)g->wnd.i / (double)g->wnd.j / 2.0);
 	rot = 0;
-	if (g->map[p_pos->i][p_pos->j] == 'S')
+	if (g->map[g->scell.i][g->scell.j] == 'S')
 		rot = M_PI;
-	else if (g->map[p_pos->i][p_pos->j] == 'E')
+	else if (g->map[g->scell.i][g->scell.j] == 'E')
 		rot = -M_PI_2;
-	else if (g->map[p_pos->i][p_pos->j] == 'W')
+	else if (g->map[g->scell.i][g->scell.j] == 'W')
 		rot = M_PI_2;
 	rotation(&player_direction, rot);
 	rotation(&player_view_plain, rot);
@@ -51,10 +52,8 @@ static void	set_start_pos(t_god *g, t_ivec *p_pos)
 static int	map_check(t_god *g)
 {
 	t_ivec	index_v;
-	t_ivec	p_cell;
 	char	**chec_map;
 
-	set_ivec(&p_cell, -1, -1);
 	if (!(chec_map = malloc(sizeof(char *) * (g->map_h))))
 		return (set_err_msg(g, "malloc error\n"));
 	index_v.i = -1;
@@ -68,15 +67,12 @@ static int	map_check(t_god *g)
 		index_v.j = -1;
 		while (++index_v.j < (int)g->map_w)
 			if (ft_strchr("NSWE", g->map[index_v.i][index_v.j]))
-			{
-				set_ivec(&p_cell, index_v.i, index_v.j);
-				set_start_pos(g, &p_cell);
-			}
+				set_start_pos(g, &index_v);
 	}
-	if(p_cell.i < 0 && p_cell.j < 0)
+	if(g->scell.i < 0 && g->scell.j < 0)
 		set_err_msg(g, "No player position\n");
 	if(!g->err_msg)
-		map_closecheck(p_cell, chec_map, g);
+		map_closecheck(g->scell, chec_map, g);
 	free_2d((void **)chec_map, g->map_h);
 	return (0);
 }

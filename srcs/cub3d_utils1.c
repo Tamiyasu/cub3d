@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:45:27 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 23:18:01 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:10:57 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void			init_god(t_god *g)
 	ft_bzero(g, sizeof(t_god));
 	g->ce_rgb = -1;
 	g->fl_rgb = -1;
+	set_ivec(&g->scell, -1, -1);
 	g->mlx = mlx_init();
 	if (!g->mlx)
 		set_err_msg(g, "Please check your XWINDOW settings\n");
