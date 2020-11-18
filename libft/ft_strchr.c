@@ -6,13 +6,13 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/22 14:40:29 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/10/13 20:34:33 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 23:29:38 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 char	*ft_strchr(const char *s, int c)
 {
-	while(*s && *s != c)
+	while (*s && *s != c)
 		s++;
 	return (*s == c ? (char *)s : 0);
 }
