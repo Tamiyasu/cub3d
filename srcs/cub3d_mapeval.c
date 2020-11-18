@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 23:00:26 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:11:20 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ static int	map_check(t_god *g)
 	t_ivec	p_cell;
 	char	**chec_map;
 
+	set_ivec(&p_cell, -1, -1);
 	if (!(chec_map = malloc(sizeof(char *) * (g->map_h))))
 		return (set_err_msg(g, "malloc error\n"));
 	index_v.i = -1;
@@ -72,7 +73,10 @@ static int	map_check(t_god *g)
 				set_start_pos(g, &p_cell);
 			}
 	}
-	map_closecheck(p_cell, chec_map, g);
+	if(0 <= p_cell.i && 0 <= p_cell.j)
+		map_closecheck(p_cell, chec_map, g);
+	else
+		set_err_msg(g, "No player position\n");
 	free_2d((void **)chec_map, g->map_h);
 	return (0);
 }

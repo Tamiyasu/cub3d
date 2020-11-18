@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 17:35:35 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:13:36 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static void	eval_conf(t_god *g, char *line, char *cfg_str, char *no_map_str)
 		g->map_h += 1;
 		g->map_w = ft_strlen(line);
 	}
+	else if (ft_strlen(cfg_str))
+		set_err_msg(g, "Unknown setting.\n");
 }
 
 static void	interpret_line(t_god *g, char *line)

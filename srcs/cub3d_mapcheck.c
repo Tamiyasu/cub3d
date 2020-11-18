@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 17:49:27 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 00:11:54 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,13 @@ static int	set_r_around(char **map, t_ivec *v, t_list **lst_last)
 
 static int	check_around(t_god *g, char **map, t_ivec *v)
 {
-	return (v->i == 0 || v->i == (int)g->map_h - 1 ||
-		v->j == 0 || v->j == (int)g->map_w - 1 ||
-		map[v->i][v->j - 1] == ' ' || map[v->i - 1][v->j] == ' ' ||
-		map[v->i][v->j + 1] == ' ' || map[v->i + 1][v->j] == ' ');
+	return (!(v->i != 0 && v->i != (int)g->map_h - 1 &&
+		v->j != 0 && v->j != (int)g->map_w - 1 &&
+		map[v->i][v->j - 1] != ' ' && map[v->i - 1][v->j] != ' ' &&
+		map[v->i][v->j + 1] != ' ' && map[v->i + 1][v->j] != ' '));
 }
 
+#include <stdio.h>
 int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 {
 	t_list *lst;
