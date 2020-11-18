@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 02:25:20 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:27:01 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ static void	free_2d(void **v, size_t i_size)
 
 static void	set_start_pos(t_god *g, t_ivec *index_v)
 {
-//	t_fvec g->pdir;
-	//t_fvec g->pvew;
 	double rot;
 
 	set_ivec(&g->scell, index_v->i, index_v->j);
@@ -40,8 +38,6 @@ static void	set_start_pos(t_god *g, t_ivec *index_v)
 		rot = M_PI_2;
 	rotation(&g->pdir, rot);
 	rotation(&g->pvew, rot);
-	//g->pvew.x = g->pvew.x;
-	//g->pvew.y = g->pvew.y;
 }
 
 static int	map_check(t_god *g)
