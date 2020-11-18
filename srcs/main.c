@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 21:59:46 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 19:44:21 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,12 @@ int	loop_func(t_god *g)
 	next_pl(g);
 	paint_bg(g);
 	make_image(g);
+	if (g->bmp)
+		write_imgf(g);
 	if (g->exit)
 		exit_func(g);
-	else if (g->bmp)
-	{
-		write_imgf(g);
-		exit_func(g);
-	}
-	mlx_do_sync(g->mlx);
 	mlx_put_image_to_window(g->mlx, g->win, g->w_img.p, 0, 0);
+	mlx_do_sync(g->mlx);
 	return (0);
 }
 
@@ -77,7 +74,9 @@ int	hook_keyrelease_func(int key_code, t_god *g)
 
 int	hook_exit_func(t_god *g)
 {
+	mlx_do_sync(g->mlx);
 	g->exit = 1;
+	exit_func(g);
 	return (0);
 }
 
@@ -99,9 +98,9 @@ int	main(int argc, char **argv)
 		if (!g.bmp)
 		{
 			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.cub_fname);
-			mlx_hook(g.win, 0b10, 0b11, &hook_keypress_func, &g);
-			mlx_hook(g.win, 0b11, 0b10, &hook_keyrelease_func, &g);
-			mlx_hook(g.win, 17, 0x20000, &hook_exit_func, &g);
+			mlx_hook(g.win, X_EVNT_KPRESS, X_MASK_KPRESS, &hook_keypress_func, &g);
+			mlx_hook(g.win, X_EVNT_KRELSE, X_MASK_KRELSE, &hook_keyrelease_func, &g);
+			mlx_hook(g.win, X_EVNT_EXIT, X_MASK_EXIT, &hook_exit_func, &g);
 			mlx_loop_hook(g.mlx, &loop_func, &g);
 			mlx_loop(g.mlx);
 		}

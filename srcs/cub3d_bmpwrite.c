@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:31:00 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 10:38:53 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 19:43:26 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void		write_imgf(t_god *g)
 {
 	int		fd;
 
+	g->exit = 1;
 	if (!(g->bmp_fname = ft_strdup(g->cub_fname)))
 	{
 		set_err_msg(g, "memory alocate error in making bmp file.");

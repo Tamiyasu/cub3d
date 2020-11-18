@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:36:20 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:12:41 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 19:41:35 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,12 @@
 # define KEY_CODE_UA  65362
 # define KEY_CODE_ESC 65307
 
-# define X_EVENT_KEY_PRESS    2
-# define X_EVENT_KEY_RELEASE  3
-# define X_EVENT_KEY_EXIT    17
+# define X_EVNT_KPRESS  2
+# define X_EVNT_KRELSE  3
+# define X_EVNT_EXIT    33
+# define X_MASK_KPRESS  0x1
+# define X_MASK_KRELSE  0x2
+# define X_MASK_EXIT    0x20000
 
 # define BMP_HEADER_SIZE 14
 # define DIB_HEADER_SIZE 40
