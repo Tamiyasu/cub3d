@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 19:44:21 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 20:54:56 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,9 @@ int	main(int argc, char **argv)
 		if (!g.bmp)
 		{
 			g.win = mlx_new_window(g.mlx, g.wnd.i, g.wnd.j, g.cub_fname);
-			mlx_hook(g.win, X_EVNT_KPRESS, X_MASK_KPRESS, &hook_keypress_func, &g);
-			mlx_hook(g.win, X_EVNT_KRELSE, X_MASK_KRELSE, &hook_keyrelease_func, &g);
-			mlx_hook(g.win, X_EVNT_EXIT, X_MASK_EXIT, &hook_exit_func, &g);
+			mlx_hook(g.win, X_E_P, X_M_P, &hook_keypress_func, &g);
+			mlx_hook(g.win, X_E_R, X_M_R, &hook_keyrelease_func, &g);
+			mlx_hook(g.win, X_E_E, X_M_E, &hook_exit_func, &g);
 			mlx_loop_hook(g.mlx, &loop_func, &g);
 			mlx_loop(g.mlx);
 		}
