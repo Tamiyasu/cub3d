@@ -6,13 +6,13 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 20:44:50 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 23:32:04 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:20:14 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int ft_strcmp(const char *s1, const char *s2)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	while(*s1 && *s1 == *s2)
+	while (*s1 && *s1 == *s2)
 	{
 		s1++;
 		s2++;
