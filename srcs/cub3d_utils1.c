@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:45:27 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/16 22:00:21 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 23:18:01 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int				set_err_msg(t_god *g, char *msg)
 
 	g->exit = 1;
 	if (!g->err_msg)
-		g->err_msg = ft_strdup("ERROR\n");
+		g->err_msg = ft_strdup("Error\n");
 	if (g->err_msg)
 	{
 		free_tmp = g->err_msg;
@@ -43,7 +43,7 @@ int				set_err_msg(t_god *g, char *msg)
 	}
 	if (!g->err_msg)
 	{
-		write(2, "ERROR\nmemory error!!!\n", 22);
+		write(2, "Error\nmemory error!!!\n", 22);
 		exit(0);
 	}
 	return (0);

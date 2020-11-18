@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:45:02 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/16 22:02:55 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/18 23:00:26 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static void	set_start_pos(t_god *g, t_ivec *p_pos)
 	t_fvec player_view_plain;
 	double rot;
 
+	if(g->ppos.x > 0)
+		set_err_msg(g, "Multi start position error\n");
 	set_fvec(&player_pos, p_pos->j + 0.5, p_pos->i + 0.5);
 	set_fvec(&player_direction, -1, 0);
 	set_fvec(&player_view_plain, 0, (double)g->wnd.i / (double)g->wnd.j / 2.0);
