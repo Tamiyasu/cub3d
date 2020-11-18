@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 03:31:21 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 03:32:25 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ static int	load_files(t_god *g, char **argv)
 {
 	int		fd;
 	char	*line;
-	
+
 	if (!(g->cub_fname = ft_strdup(argv[1])))
 		return (set_err_msg(g, "Memory Error\n"));	
 	if (0 > (fd = open(g->cub_fname, O_RDONLY)))
