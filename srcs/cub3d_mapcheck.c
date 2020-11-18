@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 00:35:33 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/19 02:27:43 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static int	check_around(t_god *g, char **map, t_ivec *v)
 		map[v->i][v->j + 1] != ' ' && map[v->i + 1][v->j] != ' '));
 }
 
-#include <stdio.h>
 int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 {
 	t_list *lst;
