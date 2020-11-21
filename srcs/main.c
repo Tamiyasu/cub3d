@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 06:15:14 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/18 20:54:56 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/21 19:22:40 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	loop_func(t_god *g)
 	next_pl(g);
 	paint_bg(g);
 	make_image(g);
-	if (g->bmp)
+	if (g->bmp && !g->exit)
 		write_imgf(g);
 	if (g->exit)
 		exit_func(g);
