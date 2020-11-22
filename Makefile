@@ -6,14 +6,13 @@
 #    By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 20:34:32 by tmurakam          #+#    #+#              #
-#    Updated: 2020/11/19 03:26:00 by tmurakam         ###   ########.fr        #
+#    Updated: 2020/11/22 09:57:03 by tmurakam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-#CFLAGS = -g -fsanitize=address
 RM = rm -f
 SRCS_DIR = srcs
 SRCS = ${SRCS_DIR}/main.c
