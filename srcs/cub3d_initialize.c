@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:08:34 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 03:33:06 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/22 21:50:55 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int			load_settings(t_god *g, int argc, char **argv)
 	cub_f_len = ft_strlen(argv[1]);
 	if (cub_f_len <= 4 || ft_strncmp(argv[1] + cub_f_len - 4, ".cub", 4))
 		return (set_err_msg(g, "Please set '.cub' file.\n"));
-	if (argc == 3 && ft_strncmp(argv[2], "--save", ft_strlen(argv[2])))
+	if (argc == 3 && ft_strncmp(argv[2], "--save", 7))
 		return (set_err_msg(g, "Plsese use \"--save\" in 2nd args\n"));
 	load_files(g, argv);
 	g->bmp = argc == 3 ? 1 : 0;

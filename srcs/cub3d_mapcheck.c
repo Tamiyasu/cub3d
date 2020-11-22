@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 10:42:45 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 02:27:43 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/22 21:56:20 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	t_list *lst_last;
 	t_ivec *pos;
 
-	lst = NULL;
-	lst_last = NULL;
 	if (!(pos = malloc(sizeof(t_ivec))))
 		return (set_err_msg(g, "malloc error!"));
 	set_ivec(pos, start_pos.i, start_pos.j);
@@ -62,7 +60,7 @@ int			map_closecheck(t_ivec start_pos, char **map, t_god *g)
 	{
 		if (check_around(g, map, (t_ivec *)(lst->content)))
 			set_err_msg(g, "map is not closed.\n");
-		if (!set_r_around(map, (t_ivec *)(lst->content), &lst_last))
+		else if (!set_r_around(map, (t_ivec *)(lst->content), &lst_last))
 			set_err_msg(g, "malloc error.\n");
 		ft_lstdelhead(&lst, &free);
 	}
