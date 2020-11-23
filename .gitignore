@@ -6,4 +6,6 @@
 cub3D
 textures
 x/
+minilibx-linux1/
+minilibx-linux2/
 srcs/print_game.c

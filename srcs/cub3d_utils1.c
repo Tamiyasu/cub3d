@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:45:27 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 02:10:57 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/23 19:56:59 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void			destroy_god(t_god *g)
 	while (g->map_h + 1 && g->map)
 		free(*(g->map + g->map_h--));
 	free(g->map);
+	mlx_destroy_display(g->mlx);
 	free(g->mlx);
 	free(g->err_msg);
 	free(g->cub_fname);
