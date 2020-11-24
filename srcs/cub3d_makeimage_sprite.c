@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:26:47 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/15 12:07:50 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/24 11:54:51 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static t_fvec	f_transform(t_god *g, int i, int j)
 static void		write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
 {
 	int				y;
-	int				d;
 	unsigned int	color;
 	t_ivec			tex;
 
@@ -40,8 +39,8 @@ static void		write_a_sprt_loop(t_god *g, t_ivec *de, int x, int *ymask)
 	y = de->i;
 	while (y <= de->j)
 	{
-		d = (double)y - g->wnd.j / 2 + g->i_s_size / 2;
-		tex.j = (int)((d * g->s_img.y_size) / g->i_s_size);
+		tex.j = (int)(((double)(y - g->wnd.j / 2 + g->i_s_size / 2) *
+		g->s_img.y_size) / g->i_s_size);
 		color = pic_color(&g->s_img, tex.i, tex.j);
 		if (color != g->i_zero_color && ymask[y] == 0)
 		{
@@ -72,17 +71,15 @@ static void		write_a_sprt(t_god *g, int x, int *ymask, t_ivec *s_cell)
 
 void			sprt_verline(t_god *g, int x, int *mx)
 {
-	int				i;
 	t_ivec			s_cell;
 	int				ymask[g->wnd.j];
 
 	ft_bzero(ymask, sizeof(int) * g->wnd.j);
 	g->i_zero_color = pic_color(&g->s_img, 0, 0);
-	i = 0;
-	while (mx[2 * i])
+	while (*mx)
 	{
-		set_ivec(&s_cell, mx[2 * i], mx[2 * i + 1]);
+		set_ivec(&s_cell, *mx, *(mx + 1));
 		write_a_sprt(g, x, ymask, &s_cell);
-		i++;
+		mx += 2;
 	}
 }

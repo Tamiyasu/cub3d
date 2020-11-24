@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:45:27 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/23 19:56:59 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/24 09:31:52 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,9 @@ void			my_mlx_pixel_put(t_god *g, int x, int y, int color)
 
 unsigned int	pic_color(t_img *img, int i, int j)
 {
-	if (0 <= i && i < img->x_size && 0 <= j && j <= img->y_size)
-		return (*((unsigned int *)(img->addr + j * img->llen) + i));
-	else
-		return (0);
+	i = MIN(MAX(i, 0), img->x_size - 1);
+	j = MIN(MAX(j, 0), img->y_size - 1);
+	return (*((unsigned int *)(img->addr + j * img->llen) + i));
 }
 
 int				set_err_msg(t_god *g, char *msg)

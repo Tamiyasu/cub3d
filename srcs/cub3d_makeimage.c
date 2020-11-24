@@ -6,7 +6,7 @@
 /*   By: tmurakam <tmurakam@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/15 11:21:44 by tmurakam          #+#    #+#             */
-/*   Updated: 2020/11/19 03:08:44 by tmurakam         ###   ########.fr       */
+/*   Updated: 2020/11/24 01:41:57 by tmurakam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,18 @@ static void	set_mapi(t_ivec *mapi, t_fvec *sidedist, t_ivec *step)
 
 static int	find_w_n_s(t_god *g, t_fvec *ray_dir, t_ivec *mapi, int *mx)
 {
-	int		mxi;
 	int		side;
 	t_fvec	sidedist;
 	t_ivec	step;
 
 	sidedist = f_sidedist(g, mapi, ray_dir);
 	set_ivec(&step, ray_dir->x < 0 ? -1 : 1, ray_dir->y < 0 ? -1 : 1);
-	mxi = 0;
 	while (g->map[mapi->i][mapi->j] != '1')
 	{
 		if (g->map[mapi->i][mapi->j] == '2')
 		{
-			mx[mxi * 2] = mapi->i;
-			mx[mxi * 2 + 1] = mapi->j;
-			mxi++;
+			*(mx++) = mapi->i;
+			*(mx++) = mapi->j;
 		}
 		side = sidedist.x < sidedist.y ? 0 : 1;
 		set_mapi(mapi, &sidedist, &step);
@@ -52,8 +49,8 @@ static void	wall_verline(t_god *g, int x)
 	int				y;
 	unsigned int	color;
 
-	de.i = -(int)(g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2;
-	de.j = (int)(g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2;
+	de.i = (int)(-(g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2);
+	de.j = (int)((g->wnd.j / g->i_perpdist) / 2 + g->wnd.j / 2);
 	tp.i = (int)(g->i_tx * (double)(g->i_img->x_size));
 	y = de.i;
 	while (y <= de.j)
